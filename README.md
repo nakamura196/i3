@@ -1,5 +1,6 @@
 # Tools related IIIF
 
+## This repository
 * IIIF Converter between annotation and curation
   * https://purl.org/dhn/i3/conv
 * JSON Editor
@@ -8,3 +9,9 @@
   * https://purl.org/dhn/i3/comp
 * IIIF Annotation Library
   * https://purl.org/dhn/i3/al
+  
+## Other repository
+* パズル Powered by Puzzles! Powered by IIIF
+  * https://purl.org/dhn/jpsearch/puzzle
+* Text Conversion to Kuzushiji
+  * https://purl.org/dhn/jpsearch/kuzushiji
