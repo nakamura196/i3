@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="stylesheet" type="text/css" href="build/mirador/css/mirador-combined.css">
+    <title>Mirador Viewer</title>
+    <style type="text/css">
+     #viewer {
+       width: 100%;
+       height: 100%;
+       position: fixed;
+     }
+    </style>
+  </head>
+  <body>
+    <div id="viewer"></div>
+
+    <script src="build/mirador/mirador.min.js"></script>
+    <script type="text/javascript">
+
+     $(function() {
+       // Called without "let" or "var"
+       // so we can play with it in the browser
+       myMiradorInstance = Mirador({
+         "id": "viewer",
+         "layout": "1x1",
+         "bottomPanelVisible":false,
+         "data": [
+           { "manifestUri": "http://dzkimgs.l.u-tokyo.ac.jp/iiif/yang2/2540981/manifest.json", "location": "Yang"},
+           { "manifestUri": "http://www2.dhii.jp/nijl/NIJL0018/099-0014/manifest_tags.json", "location": "NIJL"},
+           { "manifestUri": "http://demos.biblissima-condorcet.fr/iiif/metadata/BVMM/chateauroux/manifest.json", "location": "Biblissima"},
+           /* { "manifestUri": "http://demos.biblissima-condorcet.fr/iiif/metadata/florus-dispersus/manifest.json", "location": "Biblissima"}*/
+           { "manifestUri": "https://media.nga.gov/public/manifests/multispectral_demo.json", "location": "National Gallery of Art"}
+         ],
+         "windowObjects": [{
+            "loadedManifest": "http://dzkimgs.l.u-tokyo.ac.jp/iiif/yang2/2540981/manifest.json",
+"bottomPanel":false,
+//     "canvasID": "http://bvmm.irht.cnrs.fr/iiif/2309/canvas/981414",
+           viewType: "ImageView",
+//           slotAddress: "row1.column1",
+           windowOptions: {
+           }}
+         ],
+         "annotationEndpoint": { "name":"Local Storage", "module": "LocalStorageEndpoint" },
+         "sidePanelOptions" : {
+           "tocTabAvailable": true,
+           "layersTabAvailable": true
+
+         }
+       });
+     });
+    </script>
+  </body>
+</html>
