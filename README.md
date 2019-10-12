@@ -15,3 +15,9 @@
   * https://purl.org/dhn/jpsearch/puzzle
 * Text Conversion to Kuzushiji
   * https://purl.org/dhn/jpsearch/kuzushiji
+* Search Interface for IIIF Collection and Curation
+  * https://purl.org/dhn/isearch/
+  
+## Workshops
+* 2018_11_15_16_NCC_Digital_Scholarship_Workshop
+  * https://purl.org/dhn/i3/materials/2018_11_15_16_NCC_Digital_Scholarship_Workshop
