@@ -176,6 +176,7 @@ export default {
         //URLの置き換え
         this.updated_manifest =
           i3c_path + this.updated_manifest.replace(i3c_path, "");
+        this.ssl_manifest = this.updated_manifest;
 
         axios
           .get(this.updated_manifest)
