@@ -3,7 +3,7 @@
     <v-row class="my-5">
       <v-col cols="12" sm="9">
         <iframe
-          :src="'https://nakamura196.github.io/i3/uv/uv.html#?manifest='+ssl_manifest"
+          :src="'https://nakamura196.github.io/i3/mirador/?manifest='+ssl_manifest"
           width="100%"
           height="600"
           allowfullscreen
