@@ -3,7 +3,7 @@
     <v-row class="my-5">
       <v-col cols="12" sm="9">
         <iframe
-          :src="'http://purl.org/dhn/i3/uv/uv.html#?manifest='+updated_manifest"
+          :src="'https://purl.org/dhn/i3/uv/uv.html#?manifest='+updated_manifest"
           width="100%"
           height="600"
           allowfullscreen
