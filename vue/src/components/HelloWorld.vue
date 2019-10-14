@@ -3,7 +3,7 @@
     <v-row class="my-5">
       <v-col cols="12" sm="9">
         <iframe
-          :src="'https://www.kanzaki.com/works/2016/pub/image-annotator?u='+manifest"
+          :src="'https://nakamura196.github.io/i3/uv/uv.html#?manifest='+ssl_manifest"
           width="100%"
           height="600"
           allowfullscreen
@@ -120,6 +120,7 @@ let i3c_path = "https://w3id.org/dhj/i3c/";
 export default {
   data: () => ({
     manifest: null,
+    ssl_manifest: null,
     updated_manifest: null,
     properties: {
       description: null,
@@ -138,9 +139,13 @@ export default {
     metadata: []
   }),
   mounted() {
-    let manifest_ = this.$route.query.manifest;
-    this.manifest = manifest_;
-    this.updated_manifest = manifest_;
+    let original_manifest = this.$route.query.manifest;
+    this.manifest = original_manifest;
+    if (original_manifest.indexOf("https://") == -1) {
+      this.ssl_manifest = original_manifest.replace("http://", "https://");
+    }
+
+    this.updated_manifest = original_manifest;
 
     this.items.push({
       text: "Mirador",
@@ -159,12 +164,8 @@ export default {
       url: "http://www.kanzaki.com/works/2016/pub/image-annotator?u="
     });
 
-    if (manifest_.indexOf("https://") == -1) {
-      manifest_ = manifest_.replace("http://", "https://");
-    }
-
     axios
-      .get(manifest_)
+      .get(this.ssl_manifest)
       .then(response => {
         let result = response.data;
         this.main(result);
