@@ -116,7 +116,7 @@
 <script>
 import axios from "axios";
 
-let i3c_path = "http://w3id.org/dhj/i3c/"
+let i3c_path = "https://w3id.org/dhj/i3c/"
 
 export default {
   data: () => ({
