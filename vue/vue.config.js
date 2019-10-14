@@ -11,5 +11,5 @@ module.exports = {
   },
   publicPath: "./",
   assetsDir: "static",
-  outputDir: "../i3v"
+  outputDir: "../docs/i3v"
 }
