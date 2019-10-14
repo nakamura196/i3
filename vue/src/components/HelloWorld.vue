@@ -3,7 +3,7 @@
     <v-row class="my-5">
       <v-col cols="12" sm="9">
         <iframe
-          :src="'https://www.kanzaki.com/works/2016/pub/image-annotator?u='+updated_manifest"
+          :src="'https://www.kanzaki.com/works/2016/pub/image-annotator?u='+manifest"
           width="100%"
           height="600"
           allowfullscreen
@@ -96,8 +96,7 @@
             <v-chip class="ma-2" :color="flg_cors ? 'green' : 'orange'" outlined>
               <v-avatar left>
                 <v-icon>{{flg_cors ? 'mdi-checkbox-marked-circle' : 'mdi-close-circle'}}</v-icon>
-              </v-avatar>
-              CORS
+              </v-avatar>CORS
             </v-chip>
           </v-card-text>
         </v-card>
@@ -116,7 +115,7 @@
 <script>
 import axios from "axios";
 
-let i3c_path = "https://w3id.org/dhj/i3c/"
+let i3c_path = "https://w3id.org/dhj/i3c/";
 
 export default {
   data: () => ({
@@ -139,12 +138,33 @@ export default {
     metadata: []
   }),
   mounted() {
-    let manifest = this.$route.query.manifest;
-    this.manifest = manifest;
-    this.updated_manifest = manifest;
+    let manifest_ = this.$route.query.manifest;
+    this.manifest = manifest_;
+    this.updated_manifest = manifest_;
+
+    this.items.push({
+      text: "Mirador",
+      image: "https://iiif.dl.itc.u-tokyo.ac.jp/images/mirador.png",
+      url: "http://da.dl.itc.u-tokyo.ac.jp/mirador/?manifest="
+    });
+    this.items.push({
+      text: "Universal Viewer",
+      image: "https://iiif.dl.itc.u-tokyo.ac.jp/images/uv.png",
+      url: "http://da.dl.itc.u-tokyo.ac.jp/uv/?manifest="
+    });
+
+    this.items.push({
+      text: "Image Annotator",
+      image: "https://www.kanzaki.com/parts/me128b.png",
+      url: "http://www.kanzaki.com/works/2016/pub/image-annotator?u="
+    });
+
+    if (manifest_.indexOf("https://") == -1) {
+      manifest_ = manifest_.replace("http://", "https://");
+    }
 
     axios
-      .get(manifest)
+      .get(manifest_)
       .then(response => {
         let result = response.data;
         this.main(result);
@@ -152,12 +172,11 @@ export default {
       .catch(error => {
         console.log("E1\t" + error);
 
-        this.flg_cors = false
+        this.flg_cors = false;
 
         //URLの置き換え
         this.updated_manifest =
-          i3c_path +
-          this.updated_manifest.replace(i3c_path, "");
+          i3c_path + this.updated_manifest.replace(i3c_path, "");
 
         axios
           .get(this.updated_manifest)
@@ -176,30 +195,15 @@ export default {
         return;
       }
 
+      /*
       let flg_ssl = true;
       if (this.manifest.indexOf("https") == -1) {
         flg_ssl = false;
         this.updated_manifest =
           i3c_path +
-          this.updated_manifest.replace(i3c_path, "");
+          this.updated_manifest.replace(i3c_path, "");ßß
       }
-
-      this.items.push({
-        text: "Mirador",
-        image: "https://iiif.dl.itc.u-tokyo.ac.jp/images/mirador.png",
-        url: "http://da.dl.itc.u-tokyo.ac.jp/mirador/?manifest="
-      });
-      this.items.push({
-        text: "Universal Viewer",
-        image: "https://iiif.dl.itc.u-tokyo.ac.jp/images/uv.png",
-        url: "http://da.dl.itc.u-tokyo.ac.jp/uv/?manifest="
-      });
-
-      this.items.push({
-        text: "Image Annotator",
-        image: "https://www.kanzaki.com/parts/me128b.png",
-        url: "http://www.kanzaki.com/works/2016/pub/image-annotator?u="
-      });
+      */
 
       /*
       this.status.push({
