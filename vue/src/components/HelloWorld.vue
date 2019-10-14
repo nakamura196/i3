@@ -141,9 +141,7 @@ export default {
   mounted() {
     let original_manifest = this.$route.query.manifest;
     this.manifest = original_manifest;
-    if (original_manifest.indexOf("https://") == -1) {
-      this.ssl_manifest = original_manifest.replace("http://", "https://");
-    }
+    this.ssl_manifest = original_manifest.indexOf("https://") == -1 ? original_manifest.replace("http://", "https://") : original_manifest;
 
     this.updated_manifest = original_manifest;
 
