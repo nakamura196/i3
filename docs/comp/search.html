@@ -71,6 +71,7 @@
       }
 
       var resourceUri = arg["curation"] != null ? arg["curation"] : "https://mp.ex.nii.ac.jp/api/curation/json/528810d2-4e28-4a46-910c-c9b517f86943";
+      var thumb_flg = arg["thumb"] == "true" ? true : false;
 
       $("#compare_a").attr("href", "compare2.html?curation=" + resourceUri);
 
@@ -79,7 +80,9 @@
         alert("Error.")
       } else {
 
-        get_thumbs(resourceUri)
+        if(!thumb_flg){
+          get_thumbs(resourceUri)
+        }
 
         var array = new Array();
 
@@ -141,13 +144,16 @@
                 tr.append(td)
 
                 var id = $.md5(curationUri)
-                if (id_map[id]) {
-                  var img = $("<img>")
-                  td.append(img)
+                var img = $("<img>")
+                td.append(img)
+                
+                img.attr("width", "90px")
+                img.attr("height", "90px")
+                img.attr("class", "z-depth-1")
+                if(obj["thumbnail"] && thumb_flg){
+                  img.attr("src", obj["thumbnail"])
+                } else if(!thumb_flg && id_map[id]){
                   img.attr("src", id_map[id])
-                  img.attr("width", "90px")
-                  img.attr("height", "90px")
-                  img.attr("class", "z-depth-1")
                 }
 
                 var span = $("<span>")
