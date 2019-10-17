@@ -6,7 +6,30 @@
 
     <b-container fluid>
       <b-row class="my-5">
-        <b-col sm="12">
+        <b-col sm="3">
+
+           <b-card no-body class="mb-4" v-for="(agg, index) in aggs" :key="index">
+            <b-card-body>
+
+              <b-card-title>{{agg.label}}</b-card-title>
+
+              <b-card-text>
+
+                <b-form-group>
+                  <b-form-checkbox-group
+                    v-model="agg.value"
+                    :options="agg.options"
+                    stacked
+                  ></b-form-checkbox-group>
+                </b-form-group>
+
+              </b-card-text>
+              
+            </b-card-body>
+          </b-card>
+
+          </b-col>
+        <b-col sm="9">
           <b-row class="mb-4">
             <b-col
               sm="6"
@@ -89,9 +112,9 @@
                   <b-link :href="value._url" target="_blank">
                     <b-card-title>{{value._label}}</b-card-title>
                   </b-link>
-
+                   
                   <b-card-text>{{value.metadata}}</b-card-text>
-
+                  
                   <b-form-checkbox v-model="value._checked" name="check-button" switch></b-form-checkbox>
                 </b-card-body>
               </b-card>
@@ -129,7 +152,8 @@ export default {
       sort: "_score_desc",
       forms: [{}],
       options: [],
-      total: 0
+      total: 0,
+      aggs: []
     };
   },
   methods: {
@@ -147,7 +171,21 @@ export default {
         }
       }
 
+      for(var i = 0; i < this.aggs.length; i++){
+        let agg = this.aggs[i]
+        if(agg.value){
+          let values = agg.value
+          for(let j = 0; j < values.length; j++){
+            query[agg.label] = values[j] //複数の場合を検討
+          }
+        }
+      }
+
+      console.log(query)
+
       this.data = [];
+      this.aggs = [];
+      let map = {}
       for (var i = 0; i < this.all.length; i++) {
         let obj = this.all[i];
         let metadata = obj.metadata;
@@ -161,7 +199,43 @@ export default {
 
         if (flg) {
           this.data.push(obj);
+
+          for(let label in metadata){
+            let value = metadata[label]
+            if(!map[label]){
+              map[label] = {}
+            }
+            let tmp = map[label]
+            if(!tmp[value]){
+              tmp[value] = 0
+            }
+            tmp[value] += 1
+          }
+
         }
+      }
+
+      for(let label in map){
+        let options = []
+        for(let value in map[label]){
+          let option = {
+            text: value+" ("+map[label][value]+")",
+            value: value
+          }
+          options.push(option)
+        }
+        let agg = {
+          "label": label,
+          "options": options,
+          "value": []
+        }
+        
+        
+        if(query[label]){
+          agg.value.push(query[label])
+        }
+
+        this.aggs.push(agg)
       }
 
       this.total = this.data.length;
@@ -282,11 +356,14 @@ export default {
       this.update_param();
       this.search();
     },
-    col: function() {
-      this.update_param();
+    
+    aggs: function() {
+      //this.update_param();
       this.search();
+      console.log(this.aggs)
     }
     */
+    
   }
 };
 </script>
