@@ -115,7 +115,8 @@
               <b-card no-body class="mb-4">
                 <b-link :href="value._url" target="_blank" style="background-color: black;">
                   <b-img-lazy
-                    :src="value._thumbnail ? value._thumbnail : get_thumb(index)"
+                    v-show="value._thumbnail"
+                    :src="value._thumbnail"
                     alt="Image 1"
                     style="display: flex; margin: auto; max-height: 150px; max-width: 100%;"
                   ></b-img-lazy>
@@ -144,7 +145,8 @@
                 <b-col sm="3">
                   <b-link :href="value._url" target="_blank">
                     <b-img-lazy
-                      :src="value._thumbnail ? value._thumbnail : get_thumb(index)"
+                      v-show="value._thumbnail"
+                      :src="value._thumbnail"
                       alt="Image 1"
                       style="max-height: 150px; max-width: 100%;"
                     ></b-img-lazy>
@@ -397,13 +399,13 @@ export default {
         obj._checked = false;
       }
     },
-    get_thumb(index) {
-      let obj = this.data[index];
+    get_thumb(obj) {
       let manifest = obj._manifest;
 
       if (this.mani_arr[manifest]) {
         //return this.c_thumb(obj)
         obj._thumbnail = this.c_thumb(obj);
+        //console.log(obj._thumbnail)
         return obj._thumbnail;
       } else {
         axios.get(manifest).then(response => {
@@ -427,6 +429,7 @@ export default {
 
           //return this.c_thumb(obj)
           obj._thumbnail = this.c_thumb(obj);
+          //console.log(obj._thumbnail)
           return obj._thumbnail;
         });
       }
@@ -504,6 +507,9 @@ export default {
 
           if (member["thumbnail"]) {
             obj["_thumbnail"] = member["thumbnail"];
+          } else {
+            //obj["_thumbnail"] = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRjoqgTWHA5YKAixTxB9-ICn2tAth6CzltOVinamx2-6s6doL3I"
+            obj["_thumbnail"] = this.get_thumb(obj);
           }
 
           arr.push(obj);
