@@ -7,44 +7,26 @@
     <b-container fluid>
       <b-row class="my-5">
         <b-col sm="3">
-
-           <b-card no-body class="mb-4" v-for="(agg, index) in aggs" :key="index">
+          <b-card no-body class="mb-4" v-for="(agg, index) in aggs" :key="index">
             <b-card-body>
-
               <b-card-title>{{agg.label}}</b-card-title>
 
               <b-card-text>
-
                 <b-form-group>
-                  <b-form-checkbox-group
-                    v-model="agg.value"
-                    :options="agg.options"
-                    stacked
-                  ></b-form-checkbox-group>
+                  <b-form-checkbox-group v-model="agg.value" :options="agg.options" stacked></b-form-checkbox-group>
                 </b-form-group>
-
               </b-card-text>
-              
             </b-card-body>
           </b-card>
-
-          </b-col>
+        </b-col>
         <b-col sm="9">
           <b-row class="mb-4">
             <b-col
-              sm="6"
+              sm="12"
+              class="mb-2"
             >{{(currentPage - 1) * perPage + 1}} - {{currentPage * perPage > total ? total : currentPage * perPage }} of {{total}} results</b-col>
-            <b-col sm="6">
+            <b-col sm="12">
               <b-form inline>
-                <label class="mr-sm-2" for="inline-form-custom-select-pref">Per row:</label>
-
-                <b-form-select
-                  class="mb-2 mr-sm-2 mb-sm-0"
-                  v-model="col"
-                  :options="{ 12: '12', 6: '6', 4: '4'}"
-                  id="inline-form-custom-select-pref"
-                ></b-form-select>
-
                 <label class="mr-sm-2" for="inline-form-custom-select-pref">Per page:</label>
 
                 <b-form-select
@@ -59,8 +41,28 @@
                 <b-form-select
                   class="mb-2 mr-sm-2 mb-sm-0"
                   v-model="sort"
-                  :options="{ '_score_desc': 'Relevance'}"
+                  :options="sort_options"
                   id="inline-form-custom-select-pref"
+                ></b-form-select>
+
+                <b-form-group>
+                  <b-form-radio-group
+                    v-model="grid"
+                    :options="d_options"
+                    buttons
+                    button-variant="outline-primary"
+                    class="mr-sm-2"
+                  ></b-form-radio-group>
+                </b-form-group>
+
+                <label class="mr-sm-2" for="inline-form-custom-select-pref" v-show="grid">Per row:</label>
+
+                <b-form-select
+                  class="mb-2 mr-sm-2 mb-sm-0"
+                  v-model="col"
+                  :options="{ 12: '12', 6: '6', 4: '4'}"
+                  id="inline-form-custom-select-pref"
+                  v-show="grid"
                 ></b-form-select>
               </b-form>
             </b-col>
@@ -77,12 +79,23 @@
                 </b-col>
               </b-row>
 
-              <b-button class="my-2 mr-2" variant="info" @click="add_form">Add</b-button>
+              <b-button class="my-2" @click="add_form">Add</b-button>
+              <br />
               <b-button class="my-2" variant="primary" @click="search">Search</b-button>
             </b-card-body>
           </b-card>
 
-          <b-button class="mb-4" variant="primary" @click="compare">Compare</b-button>
+          <div class="text-right mb-4">
+            <b-button class="my-2 mr-2" variant="info" @click="compare">Compare</b-button>
+            <b-button class="my-2 mr-2" @click="select_all">Select All</b-button>
+            <b-button class="my-2 mr-2" @click="deselect_all">Unselect All</b-button>
+            <b-button
+              class="my-2"
+              variant="info"
+              :href="'https://nakamura196.github.io/i3/comp/compare2.html?curation='+$route.query.curation"
+              target="compare"
+            >Compare All</b-button>
+          </div>
 
           <b-pagination
             v-model="currentPage"
@@ -93,7 +106,7 @@
             class="mb-4"
           ></b-pagination>
 
-          <b-row>
+          <b-row v-show="grid">
             <b-col
               :sm="(12/col)"
               v-for="(value, index) in data.slice((currentPage - 1) * perPage, currentPage  * perPage)"
@@ -102,7 +115,7 @@
               <b-card no-body class="mb-4">
                 <b-link :href="value._url" target="_blank" style="background-color: black;">
                   <b-img-lazy
-                    :src="value._thumbnail"
+                    :src="value._thumbnail ? value._thumbnail : get_thumb(index)"
                     alt="Image 1"
                     style="display: flex; margin: auto; max-height: 150px; max-width: 100%;"
                   ></b-img-lazy>
@@ -112,14 +125,41 @@
                   <b-link :href="value._url" target="_blank">
                     <b-card-title>{{value._label}}</b-card-title>
                   </b-link>
-                   
-                  <b-card-text>{{value.metadata}}</b-card-text>
-                  
+
                   <b-form-checkbox v-model="value._checked" name="check-button" switch></b-form-checkbox>
                 </b-card-body>
               </b-card>
             </b-col>
           </b-row>
+
+          <b-card
+            no-body
+            class="mb-4"
+            v-for="(value, index) in data.slice((currentPage - 1) * perPage, currentPage  * perPage)"
+            :key="index"
+            v-show="!grid"
+          >
+            <b-card-body>
+              <b-row>
+                <b-col sm="3">
+                  <b-link :href="value._url" target="_blank">
+                    <b-img-lazy
+                      :src="value._thumbnail ? value._thumbnail : get_thumb(index)"
+                      alt="Image 1"
+                      style="max-height: 150px; max-width: 100%;"
+                    ></b-img-lazy>
+                  </b-link>
+                </b-col>
+                <b-col sm="9">
+                  <b-link :href="value._url" target="_blank">
+                    <b-card-title>{{value._label}}</b-card-title>
+                  </b-link>
+                  <b-card-text>{{value.metadata}}</b-card-text>
+                  <b-form-checkbox v-model="value._checked" name="check-button" switch></b-form-checkbox>
+                </b-col>
+              </b-row>
+            </b-card-body>
+          </b-card>
 
           <b-pagination
             v-model="currentPage"
@@ -153,7 +193,14 @@ export default {
       forms: [{}],
       options: [],
       total: 0,
-      aggs: []
+      aggs: [],
+      d_options: [
+        { text: "Grid", value: true },
+        { text: "List", value: false }
+      ],
+      new2: {},
+      sort_options: [],
+      mani_arr: {}
     };
   },
   methods: {
@@ -167,75 +214,140 @@ export default {
         let field = form.label;
         let value = form.value;
         if (value != "" && value != null) {
-          query[field] = value;
+          query[field] = [value];
         }
       }
 
-      for(var i = 0; i < this.aggs.length; i++){
-        let agg = this.aggs[i]
-        if(agg.value){
-          let values = agg.value
-          for(let j = 0; j < values.length; j++){
-            query[agg.label] = values[j] //複数の場合を検討
+      for (var i = 0; i < this.aggs.length; i++) {
+        let agg = this.aggs[i];
+        if (agg.value && agg.value.length > 0) {
+          query[agg.label] = agg.value;
+        }
+      }
+
+      console.log(query);
+
+      //-----------------
+
+      let sort_param = this.sort.split("_");
+
+      let sort_field = sort_param[0];
+      let sort_order = sort_param[1];
+
+      let items = this.new2[sort_field];
+
+      if (sort_order == "asc") {
+        items.sort(function(a, b) {
+          if (b.key < a.key) return 1;
+          if (b.key > a.key) return -1;
+          return 0;
+        });
+      } else {
+        items.sort(function(a, b) {
+          if (b.key > a.key) return 1;
+          if (b.key < a.key) return -1;
+          return 0;
+        });
+      }
+
+      let ids = [];
+      for (let i = 0; i < items.length; i++) {
+        let arr = items[i].value;
+        for (let j = 0; j < arr.length; j++) {
+          let index = arr[j];
+          if (ids.indexOf(index) == -1) {
+            ids.push(index);
           }
         }
       }
 
-      console.log(query)
+      //-----------------
 
       this.data = [];
       this.aggs = [];
-      let map = {}
-      for (var i = 0; i < this.all.length; i++) {
-        let obj = this.all[i];
+      let map = {};
+      for (var i = 0; i < ids.length; i++) {
+        let id = ids[i];
+        let obj = this.all[id];
         let metadata = obj.metadata;
 
         let flg = true;
         for (let key in query) {
-          if (!metadata[key] || metadata[key] != query[key]) {
+          let values = query[key];
+
+          if (!metadata[key]) {
             flg = false;
+          } else if (values.length > 0) {
+            //一個も含まない場合
+            let flg2 = false;
+
+            for (let j = 0; j < values.length; j++) {
+              if (metadata[key].indexOf(values[j]) != -1) {
+                flg2 = true;
+              }
+            }
+            //一個も含まない場合
+            if (!flg2) {
+              flg = false;
+            }
           }
         }
 
         if (flg) {
           this.data.push(obj);
 
-          for(let label in metadata){
-            let value = metadata[label]
-            if(!map[label]){
-              map[label] = {}
+          for (let label in metadata) {
+            let value = metadata[label];
+            if (!map[label]) {
+              map[label] = {};
             }
-            let tmp = map[label]
-            if(!tmp[value]){
-              tmp[value] = 0
+            let tmp = map[label];
+            if (!tmp[value]) {
+              tmp[value] = 0;
             }
-            tmp[value] += 1
+            tmp[value] += 1;
           }
-
         }
       }
 
-      for(let label in map){
-        let options = []
-        for(let value in map[label]){
+      // map: agg map
+
+      for (let label in map) {
+        let options = [];
+
+        let value_map = map[label];
+
+        let arr = Object.keys(value_map).map(e => ({
+          key: e,
+          value: value_map[e]
+        }));
+
+        arr.sort(function(a, b) {
+          if (a.value < b.value) return 1;
+          if (a.value > b.value) return -1;
+          return 0;
+        });
+
+        for (let j = 0; j < arr.length; j++) {
+          let obj = arr[j];
           let option = {
-            text: value+" ("+map[label][value]+")",
-            value: value
-          }
-          options.push(option)
+            text: obj.key + " (" + obj.value + ")",
+            value: obj.key
+          };
+          options.push(option);
         }
         let agg = {
-          "label": label,
-          "options": options,
-          "value": []
-        }
-        
-        
-        if(query[label]){
-          agg.value.push(query[label])
+          label: label,
+          options: options,
+          value: []
+        };
+
+        if (query[label]) {
+          //agg.value.push(query[label])
+          agg.value = query[label];
         }
 
-        this.aggs.push(agg)
+        this.aggs.push(agg);
       }
 
       this.total = this.data.length;
@@ -272,6 +384,62 @@ export default {
         "https://nakamura196.github.io/i3/comp/compare.html?param=" +
         encodeURIComponent(params.join(";"));
       window.open(url, "compare");
+    },
+    select_all() {
+      for (let i = 0; i < this.data.length; i++) {
+        let obj = this.data[i];
+        obj._checked = true;
+      }
+    },
+    deselect_all() {
+      for (let i = 0; i < this.data.length; i++) {
+        let obj = this.data[i];
+        obj._checked = false;
+      }
+    },
+    get_thumb(index) {
+      let obj = this.data[index];
+      let manifest = obj._manifest;
+
+      if (this.mani_arr[manifest]) {
+        //return this.c_thumb(obj)
+        obj._thumbnail = this.c_thumb(obj);
+        return obj._thumbnail;
+      } else {
+        axios.get(manifest).then(response => {
+          let mani_data = response.data;
+          var canvas_img_map = {};
+          this.mani_arr[manifest] = canvas_img_map;
+          var canvases = mani_data["sequences"][0]["canvases"];
+
+          for (var i = 0; i < canvases.length; i++) {
+            var canvas = canvases[i];
+            if (canvas["images"][0]["resource"]["service"]) {
+              canvas_img_map[canvas["@id"]] =
+                canvas["images"][0]["resource"]["service"]["@id"] +
+                "/info.json";
+            } else {
+              canvas_img_map[canvas["@id"]] =
+                canvas["images"][0]["resource"]["@id"];
+              //canvas_img_map[canvas["@id"]] = canvas["images"][0]["resource"]["service"]["@id"]
+            }
+          }
+
+          //return this.c_thumb(obj)
+          obj._thumbnail = this.c_thumb(obj);
+          return obj._thumbnail;
+        });
+      }
+    },
+    c_thumb(obj) {
+      let member_id = obj._id.split("#xywh=");
+      let canvas_uri = member_id[0];
+      let area = member_id[1];
+      let image = this.mani_arr[obj._manifest][canvas_uri];
+      if (image.indexOf("info.json") != -1) {
+        image = image.replace("info.json", area + "/200,/0/default.jpg");
+      }
+      return image;
     }
   },
   created() {
@@ -282,6 +450,9 @@ export default {
       var selections = response.data.selections;
       var count = 1;
       var fields_tmp = [];
+
+      let new2 = {};
+
       for (var i = 0; i < selections.length; i++) {
         var selection = selections[i];
         var members = selection.members;
@@ -306,12 +477,28 @@ export default {
             var metadata = member["metadata"];
             for (var k = 0; k < metadata.length; k++) {
               var m = metadata[k];
-              //obj[m.label] = m.value;
-              obj.metadata[m.label] = m.value;
 
-              if (fields_tmp.indexOf(m.label) == -1) {
-                fields_tmp.push(m.label);
+              let label = m.label;
+              let value = m.value;
+
+              //obj[m.label] = m.value;
+              obj.metadata[label] = value;
+
+              if (fields_tmp.indexOf(label) == -1) {
+                fields_tmp.push(label);
               }
+
+              //-------------
+
+              if (!new2[label]) {
+                new2[label] = {};
+              }
+
+              let tmp = new2[label];
+              if (!tmp[value]) {
+                tmp[value] = [];
+              }
+              tmp[value].push(arr.length);
             }
           }
 
@@ -322,15 +509,45 @@ export default {
           arr.push(obj);
         }
       }
+
       this.all = arr;
-      this.search();
 
       for (var i = 0; i < fields_tmp.length; i++) {
+        let label = fields_tmp[i];
         this.options.push({
-          value: fields_tmp[i],
-          text: fields_tmp[i]
+          value: label,
+          text: label
+        });
+        this.sort_options.push({
+          value: label + "_asc",
+          text: label + " Asc"
+        });
+
+        if (i == 0) {
+          this.sort = label + "_asc";
+        }
+
+        this.sort_options.push({
+          value: label + "_desc",
+          text: label + " Desc"
         });
       }
+
+      let new3 = {};
+      for (var key in new2) {
+        let tmp = new2[key];
+        new3[key] = [];
+        for (var key2 in tmp) {
+          new3[key].push({
+            key: key2,
+            value: tmp[key2]
+          });
+        }
+      }
+      this.new2 = new3;
+
+      //最後
+      this.search();
     });
 
     let param = this.$route.query;
@@ -340,7 +557,7 @@ export default {
     this.access_info = param.access_info ? param.access_info : "";
     this.col = param.col ? param.col : 6;
     this.grid = param.grid == "false" ? false : true;
-    this.sort = param.sort ? param.sort : "_score_desc";
+    //this.sort = param.sort ? param.sort : "_score_desc";
   },
   watch: {
     /*
@@ -363,7 +580,6 @@ export default {
       console.log(this.aggs)
     }
     */
-    
   }
 };
 </script>
