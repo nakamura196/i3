@@ -10,6 +10,17 @@
     <v-content>
       <HelloWorld/>
     </v-content>
+
+    <v-footer
+      class="py-5"
+    >
+      <v-col
+        class="text-center"
+        cols="12"
+      >
+        <a href="https://researchmap.jp/nakamura.satoru/?lang=english">Satoru Nakamura</a>
+      </v-col>
+    </v-footer>
   </v-app>
 </template>
 

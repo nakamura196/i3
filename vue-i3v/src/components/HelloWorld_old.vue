@@ -1,22 +1,54 @@
 <template>
   <v-container>
     <v-row class="my-5">
-      <v-col cols="12" sm="12">
+      <v-col cols="12" sm="9">
         <iframe
-          :src="'http://da.dl.itc.u-tokyo.ac.jp/uv/?manifest='+ssl_manifest"
+          :src="'mirador/?manifest='+ssl_manifest"
           width="100%"
           height="600"
           allowfullscreen
           frameborder="0"
         ></iframe>
       </v-col>
+
+      <v-col cols="12" sm="3">
+        <v-card tile>
+          <v-list shaped>
+            <v-subheader>Manifest URI icon & IIIF viewers</v-subheader>
+            <v-list-item-group>
+              <v-list-item :href="manifest" target="_blank">
+                <v-list-item-icon>
+                  <img
+                    src="https://pbs.twimg.com/profile_images/596366309601845248/2uaPY5NH_400x400.png"
+                    height="30px"
+                  />
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Manifest</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item
+                v-for="(item, i) in items"
+                :key="i"
+                :href="item.url+updated_manifest"
+                target="_blank"
+                v-if="item.flg != false"
+              >
+                <v-list-item-icon>
+                  <img :src="item.image" height="30px" />
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title v-text="item.text"></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-card>
+      </v-col>
     </v-row>
 
     <v-row class="my-5">
       <v-col cols="12" sm="7">
-
-        
-
         <v-card tile>
           <v-data-table
             :headers="headers"
@@ -25,8 +57,9 @@
             class="elevation-1"
           ></v-data-table>
         </v-card>
-
-        <v-card class="my-5" tile>
+      </v-col>
+      <v-col cols="12" sm="5">
+        <v-card tile>
           <v-simple-table>
             <template v-slot:default>
               <tbody>
@@ -51,48 +84,6 @@
           </v-simple-table>
         </v-card>
 
-      </v-col>
-
-
-
-      <v-col cols="12" sm="5">
-        
-
-        <v-card tile>
-          <v-list shaped>
-            <v-subheader>Manifest URI icon & IIIF viewers</v-subheader>
-            <v-list-item-group>
-              <v-list-item :href="manifest" target="_blank">
-                <v-list-item-icon>
-                  <img
-                    src="https://pbs.twimg.com/profile_images/596366309601845248/2uaPY5NH_400x400.png"
-                    height="30px"
-                  />
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>Manifest</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item
-                v-for="(item, i) in items"
-                :key="i"
-                :href="item.url+manifest"
-                target="_blank"
-                v-if="item.flg != false"
-              >
-                <v-list-item-icon>
-                  <img :src="item.image" height="30px" />
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title v-text="item.text"></v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-card>
-
-        <!-- 
-
         <v-card class="my-5" tile>
           <v-card-text>
             <v-chip v-for="(item, i) in status" :key="i" class="ma-2" :color="item.color" outlined>
@@ -109,9 +100,6 @@
             </v-chip>
           </v-card-text>
         </v-card>
-
-        -->
-
       </v-col>
     </v-row>
 
@@ -121,9 +109,6 @@
       <div>Satoru Nakamura</div>
     </v-footer>
     -->
-
-    <p class="my-5" v-show="updated_manifest != null">画像が表示されない場合は<a :href="'./?manifest='+updated_manifest">こちら</a>をお試しください。</p>
-
   </v-container>
 </template>
 
@@ -144,7 +129,7 @@ export default {
       related: null,
       within: null
     },
-    //flg_cors: true,
+    flg_cors: true,
     items: [],
     headers: [
       { text: "Field", value: "field" },
@@ -157,14 +142,8 @@ export default {
     let original_manifest = this.$route.query.manifest;
     this.manifest = original_manifest;
     this.ssl_manifest = original_manifest; //original_manifest.indexOf("https://") == -1 ? original_manifest.replace("http://", "https://") : original_manifest;
-    //let ssl_manifest = this.ssl_manifest
-    //this.updated_manifest = original_manifest;
 
-    if(this.manifest.indexOf(i3c_path) == -1){
-      this.updated_manifest =
-          i3c_path + this.manifest;
-    }
-    
+    this.updated_manifest = original_manifest;
 
     this.items.push({
       text: "Mirador",
@@ -174,7 +153,7 @@ export default {
     this.items.push({
       text: "Universal Viewer",
       image: "https://iiif.dl.itc.u-tokyo.ac.jp/images/uv.png",
-      url: "http://universalviewer.io/examples/uv/uv.html#?manifest="
+      url: "http://da.dl.itc.u-tokyo.ac.jp/uv/?manifest="
     });
 
     this.items.push({
@@ -191,7 +170,7 @@ export default {
       })
       .catch(error => {
         console.log("E1\t" + error);
-        /*
+
         this.flg_cors = false;
 
         //URLの置き換え
@@ -208,7 +187,6 @@ export default {
           .catch(error => {
             console.log("E2\t" + error);
           });
-        */
       });
   },
   methods: {
@@ -235,7 +213,6 @@ export default {
       });
       */
 
-      /*
       let image_service =
         result.sequences[0].canvases[0].images[0].resource.service;
 
@@ -250,9 +227,7 @@ export default {
         color: flg_image_api ? "green" : "orange"
       });
 
-      */
-
-      //if (flg_image_api) {
+      if (flg_image_api) {
         this.items.push({
           text: "IIIF Curation Viewer",
           image: "https://iiif.dl.itc.u-tokyo.ac.jp/images/icp.png",
@@ -271,7 +246,7 @@ export default {
           image: "https://iiif.dl.itc.u-tokyo.ac.jp/images/leaflet.png",
           url: "http://da.dl.itc.u-tokyo.ac.jp/leaflet/?manifest="
         });
-      //}
+      }
 
       let metadata = result["metadata"];
       for (let i = 0; i < metadata.length; i++) {
