@@ -7,16 +7,46 @@
     <b-container fluid>
       <b-row class="my-5">
         <b-col sm="3">
-          <b-card no-body class="mb-4" v-for="(agg, index) in aggs" :key="index">
-            <b-card-body>
-              <b-card-title>{{agg.label}}</b-card-title>
-
-              <b-card-text>
-                <b-form-group>
-                  <b-form-checkbox-group v-model="agg.value" :options="agg.options" stacked></b-form-checkbox-group>
-                </b-form-group>
-              </b-card-text>
-            </b-card-body>
+          <b-card
+            class="mb-4"
+            v-show="agg.buckets.length > 0"
+            v-for="(agg, label) in data.aggregations"
+            :key="label"
+            :header="label"
+          >
+            <b-button
+              type="button"
+              @click="search"
+              class="mb-3"
+              size="sm"
+              variant="outline-secondary"
+            >
+              <i class="fas fa-search"></i> Search
+            </b-button>
+            <b-form-group>
+              <b-form-checkbox
+                v-for="(bucket, index) in (query.aggs[label].flg ? agg.buckets : agg.buckets.slice(0,facet_show_size))"
+                v-model="query.aggs[label].value"
+                :key="index"
+                :value="bucket.key"
+                name="flavour-3a"
+              >
+                {{ bucket.key }}
+                <b-badge>{{bucket.doc_count.toLocaleString()}}</b-badge>
+              </b-form-checkbox>
+            </b-form-group>
+            <div class="text-right">
+              <b-button
+                v-if="agg.buckets.length > facet_show_size"
+                type="button"
+                @click="query.aggs[label].flg = !query.aggs[label].flg"
+                variant="link"
+                size="sm"
+              >
+                <template v-if="query.aggs[label].flg">Show less</template>
+                <template v-else>Show more {{agg.buckets.length - facet_show_size}} items</template>
+              </b-button>
+            </div>
           </b-card>
         </b-col>
         <b-col sm="9">
@@ -24,7 +54,7 @@
             <b-col
               sm="12"
               class="mb-2"
-            >{{(currentPage - 1) * perPage + 1}} - {{currentPage * perPage > total ? total : currentPage * perPage }} of {{total}} results</b-col>
+            >{{total > 0 ? ((currentPage - 1) * perPage + 1).toLocaleString() : 0}} - {{currentPage * perPage > total ? total.toLocaleString() : (currentPage * perPage).toLocaleString()}} of {{total.toLocaleString()}} results</b-col>
             <b-col sm="12">
               <b-form inline>
                 <label class="mr-sm-2" for="inline-form-custom-select-pref">Per page:</label>
@@ -32,7 +62,7 @@
                 <b-form-select
                   class="mb-2 mr-sm-2 mb-sm-0"
                   v-model="perPage"
-                  :options="{ 20: '20', 40: '40', 100: '100'}"
+                  :options="{ 20: '20', 50: '50', 100: '100'}"
                   id="inline-form-custom-select-pref"
                 ></b-form-select>
 
@@ -72,7 +102,7 @@
             <b-card-body>
               <b-row v-for="(form, index) in forms" :key="index" class="my-2">
                 <b-col sm="4">
-                  <b-form-select v-model="form.label" :options="options"></b-form-select>
+                  <b-form-select v-model="form.label" :options="advanced_search_options"></b-form-select>
                 </b-col>
                 <b-col sm="8">
                   <b-form-input class="mb-2 mr-sm-2 mb-sm-0" v-model="form.value"></b-form-input>
@@ -98,6 +128,7 @@
           </div>
 
           <b-pagination
+            v-if="total > 0"
             v-model="currentPage"
             :total-rows="total"
             :per-page="perPage"
@@ -107,15 +138,11 @@
           ></b-pagination>
 
           <b-row v-show="grid">
-            <b-col
-              :sm="(12/col)"
-              v-for="(value, index) in data.slice((currentPage - 1) * perPage, currentPage  * perPage)"
-              :key="index"
-            >
+            <b-col :sm="(12/col)" v-for="(value, index) in hits" :key="index">
               <b-card no-body class="mb-4">
                 <b-link :href="value._url" target="_blank" style="background-color: black;">
                   <b-img-lazy
-                    v-show="value._thumbnail"
+                    v-if="value._thumbnail"
                     :src="value._thumbnail"
                     alt="Image 1"
                     style="display: flex; margin: auto; max-height: 150px; max-width: 100%;"
@@ -133,19 +160,13 @@
             </b-col>
           </b-row>
 
-          <b-card
-            no-body
-            class="mb-4"
-            v-for="(value, index) in data.slice((currentPage - 1) * perPage, currentPage  * perPage)"
-            :key="index"
-            v-show="!grid"
-          >
+          <b-card no-body class="mb-4" v-for="(value, index) in hits" :key="index" v-show="!grid">
             <b-card-body>
               <b-row>
                 <b-col sm="3">
                   <b-link :href="value._url" target="_blank">
                     <b-img-lazy
-                      v-show="value._thumbnail"
+                      v-if="value._thumbnail"
                       :src="value._thumbnail"
                       alt="Image 1"
                       style="max-height: 150px; max-width: 100%;"
@@ -164,16 +185,25 @@
           </b-card>
 
           <b-pagination
+            v-if="total > 0"
             v-model="currentPage"
             :total-rows="total"
             :per-page="perPage"
             aria-controls="my-table"
             align="center"
-            class="my-5"
+            class="mb-4"
           ></b-pagination>
         </b-col>
       </b-row>
     </b-container>
+    <footer class="bd-footer text-muted">
+      <div class="container">
+        <hr />
+        <p class="mt-4 pb-5 text-center">
+          <a href="https://researchmap.jp/nakamura.satoru/?lang=english">Satoru Nakamura</a>
+        </p>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -183,278 +213,72 @@ export default {
   name: "HelloWorld",
   data() {
     return {
-      query: "",
-      all: [],
       data: [],
       currentPage: 1,
-      perPage: 40,
-      access_info: "",
+      perPage: 20,
       grid: true,
-      col: 6,
+      col: 4,
       sort: "_score_desc",
-      forms: [{}],
-      options: [],
       total: 0,
-      aggs: [],
+      hits: [],
+      query: {
+        aggs: {},
+        q: ""
+      },
+      facet_show_size: 10,
+
+      search_flg: false,
+
+      hits_all: [],
+      forms: [{}],
+      advanced_search_options: [],
+
+      //aggs: [],
       d_options: [
         { text: "Grid", value: true },
         { text: "List", value: false }
       ],
-      new2: {},
+      df_map: {},
       sort_options: [],
-      mani_arr: {}
+      mani_arr: {},
+      curation: ""
     };
   },
-  methods: {
-    search() {
-      this.update_param();
+  mounted() {
+    let param = this.$route.query;
+    this.query = param.query ? JSON.parse(param.query) : this.query;
+    this.currentPage = param.currentPage
+      ? Number(param.currentPage)
+      : this.currentPage;
+    this.perPage = param.perPage ? Number(param.perPage) : this.perPage;
+    this.col = param.col ? Number(param.col) : this.col;
+    this.grid = param.grid == "false" ? false : this.grid;
+    this.sort = param.sort ? param.sort : this.sort;
+    this.curation = param.curation;
+    this.init_curation(this.curation);
 
-      let query = {};
-
-      for (var i = 0; i < this.forms.length; i++) {
-        let form = this.forms[i];
-        let field = form.label;
-        let value = form.value;
-        if (value != "" && value != null) {
-          query[field] = [value];
-        }
-      }
-
-      for (var i = 0; i < this.aggs.length; i++) {
-        let agg = this.aggs[i];
-        if (agg.value && agg.value.length > 0) {
-          query[agg.label] = agg.value;
-        }
-      }
-
-      console.log(query);
-
-      //-----------------
-
-      let sort_param = this.sort.split("_");
-
-      let sort_field = sort_param[0];
-      let sort_order = sort_param[1];
-
-      let items = this.new2[sort_field];
-
-      if (sort_order == "asc") {
-        items.sort(function(a, b) {
-          if (b.key < a.key) return 1;
-          if (b.key > a.key) return -1;
-          return 0;
-        });
-      } else {
-        items.sort(function(a, b) {
-          if (b.key > a.key) return 1;
-          if (b.key < a.key) return -1;
-          return 0;
-        });
-      }
-
-      let ids = [];
-      for (let i = 0; i < items.length; i++) {
-        let arr = items[i].value;
-        for (let j = 0; j < arr.length; j++) {
-          let index = arr[j];
-          if (ids.indexOf(index) == -1) {
-            ids.push(index);
-          }
-        }
-      }
-
-      //-----------------
-
-      this.data = [];
-      this.aggs = [];
-      let map = {};
-      for (var i = 0; i < ids.length; i++) {
-        let id = ids[i];
-        let obj = this.all[id];
-        let metadata = obj.metadata;
-
-        let flg = true;
-        for (let key in query) {
-          let values = query[key];
-
-          if (!metadata[key]) {
-            flg = false;
-          } else if (values.length > 0) {
-            //一個も含まない場合
-            let flg2 = false;
-
-            for (let j = 0; j < values.length; j++) {
-              if (metadata[key].indexOf(values[j]) != -1) {
-                flg2 = true;
-              }
-            }
-            //一個も含まない場合
-            if (!flg2) {
-              flg = false;
-            }
-          }
-        }
-
-        if (flg) {
-          this.data.push(obj);
-
-          for (let label in metadata) {
-            let value = metadata[label];
-            if (!map[label]) {
-              map[label] = {};
-            }
-            let tmp = map[label];
-            if (!tmp[value]) {
-              tmp[value] = 0;
-            }
-            tmp[value] += 1;
-          }
-        }
-      }
-
-      // map: agg map
-
-      for (let label in map) {
-        let options = [];
-
-        let value_map = map[label];
-
-        let arr = Object.keys(value_map).map(e => ({
-          key: e,
-          value: value_map[e]
-        }));
-
-        arr.sort(function(a, b) {
-          if (a.value < b.value) return 1;
-          if (a.value > b.value) return -1;
-          return 0;
-        });
-
-        for (let j = 0; j < arr.length; j++) {
-          let obj = arr[j];
-          let option = {
-            text: obj.key + " (" + obj.value + ")",
-            value: obj.key
-          };
-          options.push(option);
-        }
-        let agg = {
-          label: label,
-          options: options,
-          value: []
-        };
-
-        if (query[label]) {
-          //agg.value.push(query[label])
-          agg.value = query[label];
-        }
-
-        this.aggs.push(agg);
-      }
-
-      this.total = this.data.length;
-    },
-    update_param() {
-      /*
-      let param = {
-        query: this.query,
-        currentPage: this.currentPage,
-        perPage: this.perPage,
-        access_info: this.access_info,
-        col: this.col,
-        grid: this.grid,
-        sort: this.sort
-      };
-
-      this.$router.push({ query: param });
-      */
-    },
-    add_form() {
-      this.forms.push({
-        value: ""
-      });
-    },
-    compare() {
-      let params = [];
-      for (let i = 0; i < this.data.length; i++) {
-        let obj = this.data[i];
-        if (obj._checked) {
-          params.push(obj._manifest + "#" + obj._id);
-        }
-      }
-      let url =
-        "https://nakamura196.github.io/i3/comp/compare.html?param=" +
-        encodeURIComponent(params.join(";"));
-      window.open(url, "compare");
-    },
-    select_all() {
-      for (let i = 0; i < this.data.length; i++) {
-        let obj = this.data[i];
-        obj._checked = true;
-      }
-    },
-    deselect_all() {
-      for (let i = 0; i < this.data.length; i++) {
-        let obj = this.data[i];
-        obj._checked = false;
-      }
-    },
-    get_thumb(obj) {
-      let manifest = obj._manifest;
-
-      if (this.mani_arr[manifest]) {
-        //return this.c_thumb(obj)
-        obj._thumbnail = this.c_thumb(obj);
-        //console.log(obj._thumbnail)
-        return obj._thumbnail;
-      } else {
-        axios.get(manifest).then(response => {
-          let mani_data = response.data;
-          var canvas_img_map = {};
-          this.mani_arr[manifest] = canvas_img_map;
-          var canvases = mani_data["sequences"][0]["canvases"];
-
-          for (var i = 0; i < canvases.length; i++) {
-            var canvas = canvases[i];
-            if (canvas["images"][0]["resource"]["service"]) {
-              canvas_img_map[canvas["@id"]] =
-                canvas["images"][0]["resource"]["service"]["@id"] +
-                "/info.json";
-            } else {
-              canvas_img_map[canvas["@id"]] =
-                canvas["images"][0]["resource"]["@id"];
-              //canvas_img_map[canvas["@id"]] = canvas["images"][0]["resource"]["service"]["@id"]
-            }
-          }
-
-          //return this.c_thumb(obj)
-          obj._thumbnail = this.c_thumb(obj);
-          //console.log(obj._thumbnail)
-          return obj._thumbnail;
-        });
-      }
-    },
-    c_thumb(obj) {
-      let member_id = obj._id.split("#xywh=");
-      let canvas_uri = member_id[0];
-      let area = member_id[1];
-      let image = this.mani_arr[obj._manifest][canvas_uri];
-      if (image.indexOf("info.json") != -1) {
-        image = image.replace("info.json", area + "/200,/0/default.jpg");
-      }
-      return image;
-    }
+    /*
+    let param = this.$route.query;
+    this.query = param.query ? param.query : "";
+    this.currentPage = param.currentPage ? param.currentPage : 1;
+    this.perPage = param.perPagePage ? param.cperPagePage : 40;
+    this.access_info = param.access_info ? param.access_info : "";
+    this.col = param.col ? param.col : 6;
+    this.grid = param.grid == "false" ? false : true;
+    //this.sort = param.sort ? param.sort : "_score_desc";
+    */
   },
-  created() {
-    let curation = this.$route.query.curation;
+  methods: {
+    //検索を含む
+    async init_curation(curation) {
+      const response = await axios.get(curation);
 
-    axios.get(curation).then(response => {
-      var arr = [];
+      var hits_all = [];
       var selections = response.data.selections;
-      var count = 1;
-      var fields_tmp = [];
+      var count = 1; //curation viewer用のpos
+      var fields_tmp = []; //メタデータで使われるフィールドの一覧
 
-      let new2 = {};
+      let field_value_index_map = {}; //謎
 
       for (var i = 0; i < selections.length; i++) {
         var selection = selections[i];
@@ -493,15 +317,15 @@ export default {
 
               //-------------
 
-              if (!new2[label]) {
-                new2[label] = {};
+              if (!field_value_index_map[label]) {
+                field_value_index_map[label] = {};
               }
 
-              let tmp = new2[label];
+              let tmp = field_value_index_map[label];
               if (!tmp[value]) {
                 tmp[value] = [];
               }
-              tmp[value].push(arr.length);
+              tmp[value].push(hits_all.length);
             }
           }
 
@@ -509,21 +333,23 @@ export default {
             obj["_thumbnail"] = member["thumbnail"];
           } else {
             //obj["_thumbnail"] = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRjoqgTWHA5YKAixTxB9-ICn2tAth6CzltOVinamx2-6s6doL3I"
-            obj["_thumbnail"] = this.get_thumb(obj);
+            obj["_thumbnail"] = this.get_thumbnails(obj);
           }
 
-          arr.push(obj);
+          hits_all.push(obj);
         }
       }
 
-      this.all = arr;
+      this.hits_all = hits_all;
 
       for (var i = 0; i < fields_tmp.length; i++) {
         let label = fields_tmp[i];
-        this.options.push({
+        this.advanced_search_options.push({
           value: label,
           text: label
         });
+
+        //sort options
         this.sort_options.push({
           value: label + "_asc",
           text: label + " Asc"
@@ -539,53 +365,405 @@ export default {
         });
       }
 
-      let new3 = {};
-      for (var key in new2) {
-        let tmp = new2[key];
-        new3[key] = [];
+      let df_map = {};
+      for (var key in field_value_index_map) {
+        let tmp = field_value_index_map[key];
+        df_map[key] = [];
         for (var key2 in tmp) {
-          new3[key].push({
+          df_map[key].push({
             key: key2,
             value: tmp[key2]
           });
         }
       }
-      this.new2 = new3;
+      this.df_map = df_map;
+
+      this.init();
+    },
+    init() {
+      let op = [];
+      for (let i = 0; i < this.advanced_search_options.length; i++) {
+        let obj = this.advanced_search_options[i];
+        op.push({
+          label: this.advanced_search_options[i].text,
+          field: this.advanced_search_options[i].text
+        });
+      }
+
+      //ファセット用のオブジェクトの生成
+      let aggs = {};
+
+      for (let i = 0; i < op.length; i++) {
+        let label = op[i].label;
+        let obj = {
+          field: op[i].field,
+          flg: false
+        };
+        let values = [];
+        if (this.query.aggs[label]) {
+          values = this.query.aggs[label].value;
+        }
+        obj.value = values;
+        aggs[label] = obj;
+      }
+
+      this.query.aggs = aggs;
 
       //最後
       this.search();
-    });
-
-    let param = this.$route.query;
-    this.query = param.query ? param.query : "";
-    this.currentPage = param.currentPage ? param.currentPage : 1;
-    this.perPage = param.perPagePage ? param.cperPagePage : 40;
-    this.access_info = param.access_info ? param.access_info : "";
-    this.col = param.col ? param.col : 6;
-    this.grid = param.grid == "false" ? false : true;
-    //this.sort = param.sort ? param.sort : "_score_desc";
-  },
-  watch: {
-    /*
-    currentPage: function() {
-      this.update_param();
-      this.search();
+      this.search_flg = true;
     },
-    access_info: function() {
+    search() {
+      /*
+      this.filter()
+    },
+    filter() {
+      */
       this.update_param();
-      this.search();
+
+      let query = {
+        query: {
+          bool: {
+            must: [],
+            filter: []
+          }
+        },
+        aggs: {},
+        size: this.perPage,
+        from: this.currentPage - 1
+      };
+
+      for (let key in this.query.aggs) {
+        let obj = this.query.aggs[key];
+        query.aggs[key] = {
+          terms: {
+            field: obj.field,
+            size: 50,
+            order: { _count: "desc" }
+          }
+        };
+      }
+
+      if (this.query.q != "") {
+        let q = this.query.q;
+        let tmp = q
+          .split("　")
+          .join(" ")
+          .split(" ");
+        for (let j = 0; j < tmp.length; j++) {
+          let term = tmp[j];
+          query.query.bool.must.push({ match_phrase: { label: term } });
+        }
+      }
+
+      let aggs = this.query.aggs;
+      for (let label in aggs) {
+        let values = aggs[label]["value"];
+        if (values.length > 0) {
+          let sh = [];
+          query.query.bool.filter.push({
+            bool: {
+              should: sh
+            }
+          });
+          for (let j = 0; j < values.length; j++) {
+            let obj = {};
+            obj[aggs[label].field] = values[j];
+            sh.push({
+              term: obj
+            });
+          }
+        }
+      }
+
+      this.es(query);
+    },
+    es(query_) {
+      let filters = query_.query.bool.filter;
+
+      let query = {};
+
+      //ファセットからの情報抽出
+      for (var i = 0; i < filters.length; i++) {
+        let filter = filters[i];
+        let values = filter.bool.should;
+        for (var j = 0; j < values.length; j++) {
+          let term = values[j].term;
+          let obj = Object.entries(term)[0];
+          let label = obj[0];
+          let value = obj[1];
+          if (!query[label]) {
+            query[label] = [];
+          }
+          query[label].push(value);
+        }
+      }
+
+      //フォームからの値の取得
+      for (var i = 0; i < this.forms.length; i++) {
+        let form = this.forms[i];
+        let field = form.label;
+        let value = form.value;
+        if (value != "" && value != null) {
+          query[field] = [value];
+        }
+      }
+
+      //--- sort順で並び替え ---
+
+      let sort_param = this.sort.split("_");
+
+      let sort_field = sort_param[0];
+      let sort_order = sort_param[1];
+
+      let items = this.df_map[sort_field];
+
+      if (sort_order == "asc") {
+        items.sort(function(a, b) {
+          if (b.key < a.key) return 1;
+          if (b.key > a.key) return -1;
+          return 0;
+        });
+      } else {
+        items.sort(function(a, b) {
+          if (b.key > a.key) return 1;
+          if (b.key < a.key) return -1;
+          return 0;
+        });
+      }
+
+      let ids = [];
+      for (let i = 0; i < items.length; i++) {
+        let arr = items[i].value;
+        for (let j = 0; j < arr.length; j++) {
+          let index = arr[j];
+          if (ids.indexOf(index) == -1) {
+            ids.push(index);
+          }
+        }
+      }
+
+      //------ 以下、hits -------
+
+      let hits_filtered_all = [];
+
+      let aggs_map = {};
+      for (var i = 0; i < ids.length; i++) {
+        let id = ids[i];
+        let obj = this.hits_all[id];
+        let metadata = obj.metadata;
+
+        let flg = true;
+        for (let key in query) {
+          let values = query[key];
+
+          if (!metadata[key]) {
+            flg = false;
+          } else if (values.length > 0) {
+            //一個も含まない場合
+            let flg2 = false;
+
+            for (let j = 0; j < values.length; j++) {
+              if (metadata[key].indexOf(values[j]) != -1) {
+                flg2 = true;
+              }
+            }
+            //一個も含まない場合
+            if (!flg2) {
+              flg = false;
+            }
+          }
+        }
+
+        if (flg) {
+          hits_filtered_all.push(obj);
+
+          for (let label in metadata) {
+            let value = metadata[label];
+            if (!aggs_map[label]) {
+              aggs_map[label] = {};
+            }
+            let tmp = aggs_map[label];
+            if (!tmp[value]) {
+              tmp[value] = 0;
+            }
+            tmp[value] += 1;
+          }
+        }
+      }
+
+      this.data = hits_filtered_all;
+
+      let aggregations = {};
+
+      for (let label in aggs_map) {
+        let buckets = [];
+
+        let value_map = aggs_map[label];
+
+        let arr = Object.keys(value_map).map(e => ({
+          key: e,
+          value: value_map[e]
+        }));
+
+        arr.sort(function(a, b) {
+          if (a.value < b.value) return 1;
+          if (a.value > b.value) return -1;
+          return 0;
+        });
+
+        for (let j = 0; j < arr.length; j++) {
+          let obj = arr[j];
+          let bucket = {
+            key: obj.key,
+            doc_count: obj.value
+          };
+          buckets.push(bucket);
+        }
+
+        aggregations[label] = {
+          buckets: buckets
+        };
+      }
+
+      let total = hits_filtered_all.length;
+      this.total = total;
+      let perPage = this.perPage;
+      let currentPage = this.currentPage;
+
+      //検索結果数に合わせて絞り込み
+
+      let hits_filtered = [];
+
+      let start = (currentPage - 1) * perPage;
+      let end = currentPage * perPage > total ? total : currentPage * perPage;
+
+      for (let i = start; i < end; i++) {
+        hits_filtered.push(hits_filtered_all[i]);
+      }
+
+      //フォーマット
+
+      let hits = {
+        hits: hits_filtered,
+        total: {
+          relation: "gte",
+          value: hits_filtered_all.length
+        }
+      };
+
+      let result = {
+        aggregations: aggregations,
+        hits: hits
+      };
+
+      //結果ALL
+      this.data = result;
+
+      //検索アイテムのみ
+      this.hits = hits.hits;
+    },
+    update_param() {
+      let param = {
+        query: JSON.stringify(this.query),
+        currentPage: this.currentPage,
+        perPage: this.perPage,
+        col: this.col,
+        grid: this.grid,
+        sort: this.sort,
+        curation: this.curation
+      };
+      this.$router.replace({ name: "home", query: param }, () => {}, () => {});
+    },
+    //フォームを追加するメソッド
+    add_form() {
+      this.forms.push({
+        value: ""
+      });
+    },
+    compare() {
+      let params = [];
+      for (let i = 0; i < this.hits.length; i++) {
+        let obj = this.hits[i];
+        if (obj._checked) {
+          params.push(obj._manifest + "#" + obj._id);
+        }
+      }
+      let url =
+        "https://nakamura196.github.io/i3/comp/compare.html?param=" +
+        encodeURIComponent(params.join(";"));
+      window.open(url, "compare");
+    },
+    select_all() {
+      for (let i = 0; i < this.hits.length; i++) {
+        let obj = this.hits[i];
+        obj._checked = true;
+      }
+    },
+    deselect_all() {
+      for (let i = 0; i < this.hits.length; i++) {
+        let obj = this.hits[i];
+        obj._checked = false;
+      }
+    },
+    get_thumbnails(obj) {
+      let manifest = obj._manifest;
+
+      if (this.mani_arr[manifest]) {
+        obj._thumbnail = this.get_thumbnail(obj);
+        return obj._thumbnail;
+      } else {
+        axios.get(manifest).then(response => {
+          let mani_data = response.data;
+          var canvas_img_map = {};
+          this.mani_arr[manifest] = canvas_img_map;
+          var canvases = mani_data["sequences"][0]["canvases"];
+
+          for (var i = 0; i < canvases.length; i++) {
+            var canvas = canvases[i];
+            if (canvas["images"][0]["resource"]["service"]) {
+              canvas_img_map[canvas["@id"]] =
+                canvas["images"][0]["resource"]["service"]["@id"] +
+                "/info.json";
+            } else {
+              canvas_img_map[canvas["@id"]] =
+                canvas["images"][0]["resource"]["@id"];
+              //canvas_img_map[canvas["@id"]] = canvas["images"][0]["resource"]["service"]["@id"]
+            }
+          }
+          obj._thumbnail = this.get_thumbnail(obj);
+          return obj._thumbnail;
+        });
+      }
+    },
+    get_thumbnail(obj) {
+      let member_id = obj._id.split("#xywh=");
+      let canvas_uri = member_id[0];
+      let area = member_id[1];
+      let image = this.mani_arr[obj._manifest][canvas_uri];
+      if (image.indexOf("info.json") != -1) {
+        image = image.replace("info.json", area + "/200,/0/default.jpg");
+      }
+      return image;
+    }
+  },
+
+  watch: {
+    currentPage: function() {
+      if (this.search_flg) {
+        this.search();
+      }
+      this.update_param();
     },
     perPage: function() {
+      if (this.search_flg) {
+        this.search();
+      }
       this.update_param();
-      this.search();
     },
-    
-    aggs: function() {
-      //this.update_param();
-      this.search();
-      console.log(this.aggs)
+    col: function() {
+      this.update_param();
     }
-    */
   }
 };
 </script>
