@@ -85,14 +85,18 @@
                   ></b-form-radio-group>
                 </b-form-group>
 
-                <label class="mr-sm-2" for="inline-form-custom-select-pref" v-show="grid">Per row:</label>
+                <label
+                  class="mr-sm-2"
+                  for="inline-form-custom-select-pref"
+                  v-show="grid == 'grid'"
+                >Per row:</label>
 
                 <b-form-select
                   class="mb-2 mr-sm-2 mb-sm-0"
                   v-model="col"
                   :options="{ 12: '12', 6: '6', 4: '4'}"
                   id="inline-form-custom-select-pref"
-                  v-show="grid"
+                  v-show="grid == 'grid'"
                 ></b-form-select>
               </b-form>
             </b-col>
@@ -115,7 +119,7 @@
             </b-card-body>
           </b-card>
 
-          <div class="text-right mb-4">
+          <div class="text-right mb-4" v-show="grid != 'table'">
             <b-button class="my-2 mr-2" variant="info" @click="compare">Compare</b-button>
             <b-button class="my-2 mr-2" @click="select_all">Select All</b-button>
             <b-button class="my-2 mr-2" @click="deselect_all">Unselect All</b-button>
@@ -137,7 +141,7 @@
             class="mb-4"
           ></b-pagination>
 
-          <b-row v-show="grid">
+          <b-row v-show="grid == 'grid'">
             <b-col :sm="(12/col)" v-for="(value, index) in hits" :key="index">
               <b-card no-body class="mb-4">
                 <b-link :href="value._url" target="_blank" style="background-color: black;">
@@ -160,7 +164,13 @@
             </b-col>
           </b-row>
 
-          <b-card no-body class="mb-4" v-for="(value, index) in hits" :key="index" v-show="!grid">
+          <b-card
+            no-body
+            class="mb-4"
+            v-for="(value, index) in hits"
+            :key="index"
+            v-show="grid == 'list'"
+          >
             <b-card-body>
               <b-row>
                 <b-col sm="3">
@@ -183,6 +193,24 @@
               </b-row>
             </b-card-body>
           </b-card>
+
+          <b-table
+            class="mb-4"
+            striped
+            hover
+            :fields="fields"
+            :items="items"
+            responsive
+            v-show="grid == 'table'"
+          >
+            <template v-slot:cell(_label)="data">
+              <b-link :href="data.item._url" target="_blank">
+                <b>{{data.item._label}}</b>
+              </b-link>
+            </template>
+
+            <template v-slot:cell()="data">{{ data.value }}</template>
+          </b-table>
 
           <b-pagination
             v-if="total > 0"
@@ -216,7 +244,7 @@ export default {
       data: [],
       currentPage: 1,
       perPage: 20,
-      grid: true,
+      grid: "grid",
       col: 4,
       sort: "_score_desc",
       total: 0,
@@ -235,13 +263,17 @@ export default {
 
       //aggs: [],
       d_options: [
-        { text: "Grid", value: true },
-        { text: "List", value: false }
+        { text: "Grid", value: "grid" },
+        { text: "List", value: "list" },
+        { text: "Table", value: "table" }
       ],
       df_map: {},
       sort_options: [],
       mani_arr: {},
-      curation: ""
+      curation: "",
+
+      fields: [{ name: "Label", key: "_label" }],
+      items: []
     };
   },
   mounted() {
@@ -252,21 +284,10 @@ export default {
       : this.currentPage;
     this.perPage = param.perPage ? Number(param.perPage) : this.perPage;
     this.col = param.col ? Number(param.col) : this.col;
-    this.grid = param.grid == "false" ? false : this.grid;
+    this.grid = param.grid ? param.grid : this.grid;
     this.sort = param.sort ? param.sort : this.sort;
     this.curation = param.curation;
     this.init_curation(this.curation);
-
-    /*
-    let param = this.$route.query;
-    this.query = param.query ? param.query : "";
-    this.currentPage = param.currentPage ? param.currentPage : 1;
-    this.perPage = param.perPagePage ? param.cperPagePage : 40;
-    this.access_info = param.access_info ? param.access_info : "";
-    this.col = param.col ? param.col : 6;
-    this.grid = param.grid == "false" ? false : true;
-    //this.sort = param.sort ? param.sort : "_score_desc";
-    */
   },
   methods: {
     //検索を含む
@@ -348,6 +369,9 @@ export default {
           value: label,
           text: label
         });
+
+        //table
+        this.fields.push(label);
 
         //sort options
         this.sort_options.push({
@@ -638,9 +662,23 @@ export default {
       let start = (currentPage - 1) * perPage;
       let end = currentPage * perPage > total ? total : currentPage * perPage;
 
+      let items_table = [];
+
       for (let i = start; i < end; i++) {
-        hits_filtered.push(hits_filtered_all[i]);
+        let obj = hits_filtered_all[i];
+        hits_filtered.push(obj);
+
+        let item = {}; //obj.metadata
+        item._url = obj._url;
+        item._label = obj._label;
+        for (let key in obj.metadata) {
+          //コピーはダメ
+          item[key] = obj.metadata[key];
+        }
+        items_table.push(item);
       }
+
+      this.items = items_table;
 
       //フォーマット
 
