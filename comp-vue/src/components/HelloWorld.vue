@@ -6,10 +6,10 @@
       <b-collapse id="nav-collapse" is-nav>
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
-          <b-button v-b-modal.modal-1 class="mr-2">
+          <b-button v-b-modal.modal-1 class="m-1">
             <i class="fas fa-search"></i> Advanced Search
           </b-button>
-          <b-button @click="sidebar_open_flg = !sidebar_open_flg">
+          <b-button  class="m-1" @click="sidebar_open_flg = !sidebar_open_flg">
             <template v-if="sidebar_open_flg">Hide Sidebar</template>
             <template v-else>Show Sidebar</template>
           </b-button>
@@ -88,7 +88,8 @@
                   id="inline-form-custom-select-pref"
                 ></b-form-select>
 
-                <div class="mr-sm-2 btn-group-toggle btn-group">
+                <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                <div class="btn-group-toggle btn-group">
                   <label
                     class="btn btn-outline-primary"
                     :class="[d_option.value == grid ? 'active' : '']"
@@ -98,6 +99,7 @@
                     <input v-model="grid" type="radio" autocomplete="off" :value="d_option.value" />
                     <span v-html="d_option.text"></span>
                   </label>
+                </div>
                 </div>
 
                 <label
@@ -113,21 +115,18 @@
                   id="inline-form-custom-select-pref"
                   v-show="grid == 'grid'"
                 ></b-form-select>
+
+                
               </b-form>
             </b-col>
           </b-row>
 
           <div class="text-right mb-4" v-show="grid != 'table'">
-            <b-button class="my-2 mr-2" variant="info" @click="compare">Compare</b-button>
-            <b-button class="my-2 mr-2" @click="select_all">Select All</b-button>
-            <b-button class="my-2 mr-2" @click="deselect_all">Unselect All</b-button>
-            <b-button
-              class="my-2"
-              variant="info"
-              :href="'https://nakamura196.github.io/i3/comp/compare2.html?curation='+$route.query.curation"
-              target="compare"
-            >Compare All</b-button>
-          </div>
+            
+            <b-button class="my-2 mr-2" @click="select_all"><i class="fas fa-check-square"></i> Select All</b-button>
+            <b-button class="my-2 mr-2" @click="deselect_all"><i class="fas fa-square"></i> Unselect All</b-button>
+            <b-button class="my-2 mr-2" variant="info" @click="compare">Compare <i class="fas fa-external-link-alt"></i></b-button>
+        </div>
 
           <b-pagination
             v-if="total > 0"
@@ -696,13 +695,13 @@ export default {
     },
     update_param() {
       let param = {
+        curation: this.curation,
         query: JSON.stringify(this.query),
         currentPage: this.currentPage,
         perPage: this.perPage,
         col: this.col,
         grid: this.grid,
-        sort: this.sort,
-        curation: this.curation
+        sort: this.sort
       };
       this.$router.replace({ name: "home", query: param }, () => {}, () => {});
     },
