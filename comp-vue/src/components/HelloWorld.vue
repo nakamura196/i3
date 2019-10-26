@@ -1,12 +1,25 @@
 <template>
   <div class="bg-light">
     <b-navbar toggleable="lg" type="dark" variant="info">
-      <b-navbar-brand href="#">IIIF Curation Comparison Tool</b-navbar-brand>
+      <b-navbar-brand href="#">IIIF Curation Comparison</b-navbar-brand>
+      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+      <b-collapse id="nav-collapse" is-nav>
+        <!-- Right aligned nav items -->
+        <b-navbar-nav class="ml-auto">
+          <b-button v-b-modal.modal-1 class="mr-2">
+            <i class="fas fa-search"></i> Advanced Search
+          </b-button>
+          <b-button @click="sidebar_open_flg = !sidebar_open_flg">
+            <template v-if="sidebar_open_flg">Hide Sidebar</template>
+            <template v-else>Show Sidebar</template>
+          </b-button>
+        </b-navbar-nav>
+      </b-collapse>
     </b-navbar>
 
     <b-container fluid>
       <b-row class="my-5">
-        <b-col sm="3">
+        <b-col :sm="3" v-show="sidebar_open_flg">
           <b-card
             class="mb-4"
             v-show="agg.buckets.length > 0"
@@ -49,7 +62,7 @@
             </div>
           </b-card>
         </b-col>
-        <b-col sm="9">
+        <b-col :sm="sidebar_open_flg ? 9 : 12">
           <b-row class="mb-4">
             <b-col
               sm="12"
@@ -75,15 +88,17 @@
                   id="inline-form-custom-select-pref"
                 ></b-form-select>
 
-                <b-form-group>
-                  <b-form-radio-group
-                    v-model="grid"
-                    :options="d_options"
-                    buttons
-                    button-variant="outline-primary"
-                    class="mr-sm-2"
-                  ></b-form-radio-group>
-                </b-form-group>
+                <div class="mr-sm-2 btn-group-toggle btn-group">
+                  <label
+                    class="btn btn-outline-primary"
+                    :class="[d_option.value == grid ? 'active' : '']"
+                    v-for="(d_option, index) in d_options"
+                    :key="index"
+                  >
+                    <input v-model="grid" type="radio" autocomplete="off" :value="d_option.value" />
+                    <span v-html="d_option.text"></span>
+                  </label>
+                </div>
 
                 <label
                   class="mr-sm-2"
@@ -101,23 +116,6 @@
               </b-form>
             </b-col>
           </b-row>
-
-          <b-card no-body class="mb-4">
-            <b-card-body>
-              <b-row v-for="(form, index) in forms" :key="index" class="my-2">
-                <b-col sm="4">
-                  <b-form-select v-model="form.label" :options="advanced_search_options"></b-form-select>
-                </b-col>
-                <b-col sm="8">
-                  <b-form-input class="mb-2 mr-sm-2 mb-sm-0" v-model="form.value"></b-form-input>
-                </b-col>
-              </b-row>
-
-              <b-button class="my-2" @click="add_form">Add</b-button>
-              <br />
-              <b-button class="my-2" variant="primary" @click="search">Search</b-button>
-            </b-card-body>
-          </b-card>
 
           <div class="text-right mb-4" v-show="grid != 'table'">
             <b-button class="my-2 mr-2" variant="info" @click="compare">Compare</b-button>
@@ -232,6 +230,25 @@
         </p>
       </div>
     </footer>
+
+    <b-modal id="modal-1" size="lg" title="Advanced Search" hide-footer>
+      <b-row v-for="(form, index) in forms" :key="index" class="my-2">
+        <b-col sm="4">
+          <b-form-select v-model="form.label" :options="advanced_search_options"></b-form-select>
+        </b-col>
+        <b-col sm="8">
+          <b-form-input class="mb-2 mr-sm-2 mb-sm-0" v-model="form.value"></b-form-input>
+        </b-col>
+      </b-row>
+
+      <b-button class="my-2" @click="add_form">
+        <i class="fas fa-plus"></i> Add
+      </b-button>
+      <br />
+      <b-button class="my-2" variant="primary" @click="search">
+        <i class="fas fa-search"></i> Search
+      </b-button>
+    </b-modal>
   </div>
 </template>
 
@@ -263,17 +280,19 @@ export default {
 
       //aggs: [],
       d_options: [
-        { text: "Grid", value: "grid" },
-        { text: "List", value: "list" },
-        { text: "Table", value: "table" }
+        { text: "<i class='fas fa-th-large'></i>", value: "grid" },
+        { text: "<i class='fas fa-th-list'></i>", value: "list" },
+        { text: "<i class='fas fa-table'></i>", value: "table" }
       ],
       df_map: {},
       sort_options: [],
       mani_arr: {},
-      curation: "",
+      curation: null,
 
       fields: [{ name: "Label", key: "_label" }],
-      items: []
+      items: [],
+
+      sidebar_open_flg: true
     };
   },
   mounted() {
@@ -287,6 +306,9 @@ export default {
     this.grid = param.grid ? param.grid : this.grid;
     this.sort = param.sort ? param.sort : this.sort;
     this.curation = param.curation;
+    if (this.curation == null) {
+      location.href = "http://iiif.nakamurasatoru.com/comp";
+    }
     this.init_curation(this.curation);
   },
   methods: {
@@ -362,6 +384,7 @@ export default {
       }
 
       this.hits_all = hits_all;
+      //console.log(hits_all)
 
       for (var i = 0; i < fields_tmp.length; i++) {
         let label = fields_tmp[i];
@@ -535,37 +558,7 @@ export default {
 
       //--- sort順で並び替え ---
 
-      let sort_param = this.sort.split("_");
-
-      let sort_field = sort_param[0];
-      let sort_order = sort_param[1];
-
-      let items = this.df_map[sort_field];
-
-      if (sort_order == "asc") {
-        items.sort(function(a, b) {
-          if (b.key < a.key) return 1;
-          if (b.key > a.key) return -1;
-          return 0;
-        });
-      } else {
-        items.sort(function(a, b) {
-          if (b.key > a.key) return 1;
-          if (b.key < a.key) return -1;
-          return 0;
-        });
-      }
-
-      let ids = [];
-      for (let i = 0; i < items.length; i++) {
-        let arr = items[i].value;
-        for (let j = 0; j < arr.length; j++) {
-          let index = arr[j];
-          if (ids.indexOf(index) == -1) {
-            ids.push(index);
-          }
-        }
-      }
+      let ids = this.get_sorted_ids();
 
       //------ 以下、hits -------
 
@@ -783,6 +776,47 @@ export default {
         image = image.replace("info.json", area + "/200,/0/default.jpg");
       }
       return image;
+    },
+    get_sorted_ids() {
+      let sort_param = this.sort.split("_");
+
+      let sort_field = sort_param[0];
+      let sort_order = sort_param[1];
+
+      let items = this.df_map[sort_field];
+      let ids = [];
+
+      if (items != null) {
+        if (sort_order == "asc") {
+          items.sort(function(a, b) {
+            if (b.key < a.key) return 1;
+            if (b.key > a.key) return -1;
+            return 0;
+          });
+        } else {
+          items.sort(function(a, b) {
+            if (b.key > a.key) return 1;
+            if (b.key < a.key) return -1;
+            return 0;
+          });
+        }
+
+        for (let i = 0; i < items.length; i++) {
+          let arr = items[i].value;
+          for (let j = 0; j < arr.length; j++) {
+            let index = arr[j];
+            if (ids.indexOf(index) == -1) {
+              ids.push(index);
+            }
+          }
+        }
+      } else {
+        for (let i = 0; i < this.hits_all.length; i++) {
+          ids.push(i);
+        }
+      }
+
+      return ids;
     }
   },
 
