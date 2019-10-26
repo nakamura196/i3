@@ -1,7 +1,7 @@
 <template>
   <div class="bg-light">
     <b-navbar toggleable="lg" type="dark" variant="info">
-      <b-navbar-brand href="#">IIIF Curation Comparison</b-navbar-brand>
+      <b-navbar-brand href="http://iiif.nakamurasatoru.com/comp">IIIF Curation Comparison</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
         <!-- Right aligned nav items -->
@@ -75,7 +75,7 @@
                 <b-form-select
                   class="mb-2 mr-sm-2 mb-sm-0"
                   v-model="perPage"
-                  :options="{ 20: '20', 50: '50', 100: '100'}"
+                  :options="{ 20: '20', 50: '50', 100: '100', 1000: '1000'}"
                   id="inline-form-custom-select-pref"
                 ></b-form-select>
 
@@ -153,7 +153,7 @@
 
                 <b-card-body>
                   <b-link :href="value._url" target="_blank">
-                    <b-card-title>{{value._label}}</b-card-title>
+                    <b>{{value._label}}</b>
                   </b-link>
 
                   <b-form-checkbox v-model="value._checked" name="check-button" switch></b-form-checkbox>
@@ -183,7 +183,7 @@
                 </b-col>
                 <b-col sm="9">
                   <b-link :href="value._url" target="_blank">
-                    <b-card-title>{{value._label}}</b-card-title>
+                    <b>{{value._label}}</b>
                   </b-link>
                   <b-card-text>{{value.metadata}}</b-card-text>
                   <b-form-checkbox v-model="value._checked" name="check-button" switch></b-form-checkbox>
@@ -828,6 +828,12 @@ export default {
       this.update_param();
     },
     perPage: function() {
+      if (this.search_flg) {
+        this.search();
+      }
+      this.update_param();
+    },
+    sort: function() {
       if (this.search_flg) {
         this.search();
       }
