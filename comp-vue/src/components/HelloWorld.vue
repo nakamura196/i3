@@ -89,17 +89,17 @@
                 ></b-form-select>
 
                 <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                <div class="btn-group-toggle btn-group">
-                  <label
-                    class="btn btn-outline-primary"
-                    :class="[d_option.value == grid ? 'active' : '']"
-                    v-for="(d_option, index) in d_options"
-                    :key="index"
-                  >
-                    <input v-model="grid" type="radio" autocomplete="off" :value="d_option.value" />
-                    <span v-html="d_option.text"></span>
-                  </label>
-                </div>
+                  <div class="btn-group-toggle btn-group">
+                    <label
+                      class="btn btn-outline-primary"
+                      :class="[d_option.value == grid ? 'active' : '']"
+                      v-for="(d_option, index) in d_options"
+                      :key="index"
+                    >
+                      <input v-model="grid" type="radio" autocomplete="off" :value="d_option.value" />
+                      <span v-html="d_option.text"></span>
+                    </label>
+                  </div>
                 </div>
 
                 <label
@@ -177,6 +177,8 @@
                       :src="value._thumbnail"
                       alt="Image 1"
                       style="max-height: 150px; max-width: 100%;"
+                      class="pb-2"
+                      center
                     ></b-img-lazy>
                   </b-link>
                 </b-col>
@@ -196,7 +198,7 @@
             striped
             hover
             :fields="fields"
-            :items="items"
+            :items="items_table"
             responsive
             v-show="grid == 'table'"
           >
@@ -289,14 +291,14 @@ export default {
       curation: null,
 
       fields: [{ name: "Label", key: "_label" }],
-      items: [],
+      items_table: [],
 
       sidebar_open_flg: true
     };
   },
   mounted() {
     let param = this.$route.query;
-    this.query = param.query ? JSON.parse(param.query) : this.query;
+    let query = param.query ? JSON.parse(param.query) : {};
     this.currentPage = param.currentPage
       ? Number(param.currentPage)
       : this.currentPage;
@@ -308,11 +310,12 @@ export default {
     if (this.curation == null) {
       location.href = "http://iiif.nakamurasatoru.com/comp";
     }
-    this.init_curation(this.curation);
+
+    this.init_curation(this.curation, query);
   },
   methods: {
     //検索を含む
-    async init_curation(curation) {
+    async init_curation(curation, query) {
       const response = await axios.get(curation);
 
       var hits_all = [];
@@ -424,9 +427,9 @@ export default {
       }
       this.df_map = df_map;
 
-      this.init();
+      this.init(query);
     },
-    init() {
+    init(query) {
       let op = [];
       for (let i = 0; i < this.advanced_search_options.length; i++) {
         let obj = this.advanced_search_options[i];
@@ -434,6 +437,10 @@ export default {
           label: this.advanced_search_options[i].text,
           field: this.advanced_search_options[i].text
         });
+      }
+
+      if (query.q) {
+        this.query.q = query.q;
       }
 
       //ファセット用のオブジェクトの生成
@@ -446,8 +453,8 @@ export default {
           flg: false
         };
         let values = [];
-        if (this.query.aggs[label]) {
-          values = this.query.aggs[label].value;
+        if (query.aggs && query.aggs[label]) {
+          values = query.aggs[label];
         }
         obj.value = values;
         aggs[label] = obj;
@@ -670,7 +677,7 @@ export default {
         items_table.push(item);
       }
 
-      this.items = items_table;
+      this.items_table = items_table;
 
       //フォーマット
 
@@ -694,9 +701,22 @@ export default {
       this.hits = hits.hits;
     },
     update_param() {
+
+      let query_ = this.query;
+      let query = {
+        q: query_.q,
+        aggs: {}
+      };
+
+      for (let key in query_.aggs) {
+        if (query_.aggs[key].value.length > 0) {
+          query.aggs[key] = query_.aggs[key].value;
+        }
+      }
+
       let param = {
         curation: this.curation,
-        query: JSON.stringify(this.query),
+        query: JSON.stringify(query),
         currentPage: this.currentPage,
         perPage: this.perPage,
         col: this.col,
@@ -839,6 +859,9 @@ export default {
       this.update_param();
     },
     col: function() {
+      this.update_param();
+    },
+    grid: function() {
       this.update_param();
     }
   }
