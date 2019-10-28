@@ -304,10 +304,13 @@
             //var text = JSON.stringify(curation.metadata)
             var text = ""
 
-            for (var l = 0; l < curation.metadata.length; l++) {
-              var metadata = curation.metadata[l]
-              text += metadata.label + ": " + metadata.value + "\n"
+            if(curation.metadata){
+              for (var l = 0; l < curation.metadata.length; l++) {
+                var metadata = curation.metadata[l]
+                text += metadata.label + ": " + metadata.value + "\n"
+              }
             }
+            
 
             if (text == "") {
               text = "Curation [" + (j + 1) + "]"
