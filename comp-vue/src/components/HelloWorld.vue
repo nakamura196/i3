@@ -286,7 +286,10 @@ export default {
         { text: "<i class='fas fa-table'></i>", value: "table" }
       ],
       df_map: {},
-      sort_options: [],
+      sort_options: [{
+        value: "_score_desc",
+        text: "Relevance"
+      }],
       mani_arr: {},
       curation: null,
 
@@ -388,8 +391,8 @@ export default {
       this.hits_all = hits_all;
       //console.log(hits_all)
 
-      for (var i = 0; i < fields_tmp.length; i++) {
-        let label = fields_tmp[i];
+      for (var i_ = 0; i_ < fields_tmp.length; i_++) {
+        let label = fields_tmp[i_];
         this.advanced_search_options.push({
           value: label,
           text: label
@@ -403,10 +406,6 @@ export default {
           value: label + "_asc",
           text: label + " Asc"
         });
-
-        if (i == 0) {
-          this.sort = label + "_asc";
-        }
 
         this.sort_options.push({
           value: label + "_desc",
@@ -432,7 +431,6 @@ export default {
     init(query) {
       let op = [];
       for (let i = 0; i < this.advanced_search_options.length; i++) {
-        let obj = this.advanced_search_options[i];
         op.push({
           label: this.advanced_search_options[i].text,
           field: this.advanced_search_options[i].text
@@ -537,8 +535,8 @@ export default {
       let query = {};
 
       //ファセットからの情報抽出
-      for (var i = 0; i < filters.length; i++) {
-        let filter = filters[i];
+      for (let i_ = 0; i_ < filters.length; i_++) {
+        let filter = filters[i_];
         let values = filter.bool.should;
         for (var j = 0; j < values.length; j++) {
           let term = values[j].term;
@@ -553,8 +551,8 @@ export default {
       }
 
       //フォームからの値の取得
-      for (var i = 0; i < this.forms.length; i++) {
-        let form = this.forms[i];
+      for (let i_ = 0; i_ < this.forms.length; i_++) {
+        let form = this.forms[i_];
         let field = form.label;
         let value = form.value;
         if (value != "" && value != null) {
@@ -571,8 +569,8 @@ export default {
       let hits_filtered_all = [];
 
       let aggs_map = {};
-      for (var i = 0; i < ids.length; i++) {
-        let id = ids[i];
+      for (let i_ = 0; i_ < ids.length; i_++) {
+        let id = ids[i_];
         let obj = this.hits_all[id];
         let metadata = obj.metadata;
 
@@ -803,6 +801,7 @@ export default {
       let sort_order = sort_param[1];
 
       let items = this.df_map[sort_field];
+
       let ids = [];
 
       if (items != null) {
