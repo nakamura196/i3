@@ -5,20 +5,39 @@
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
         <!-- Right aligned nav items -->
-        <b-navbar-nav class="ml-auto">
-        </b-navbar-nav>
+        <b-navbar-nav class="ml-auto"></b-navbar-nav>
       </b-collapse>
     </b-navbar>
 
     <b-container fluid>
-      <h2 class="my-5 text-center">{{label}}</h2>
+      <b-container>
+        <h2 class="my-5">{{label}}</h2>
+        <div class="text-right">
+          <div class="btn-group-toggle btn-group">
+            <label
+              class="btn btn-outline-secondary"
+              :class="[d_option.value == grid ? 'active' : '']"
+              v-for="(d_option, index) in d_options"
+              :key="index"
+            >
+              <input v-model="grid" type="radio" autocomplete="off" :value="d_option.value" />
+              <span v-html="d_option.text"></span>
+            </label>
+          </div>
+        </div>
+      </b-container>
+
       <b-row class="my-5">
-        <b-col :sm="2" v-for="(obj, index) in data" :key="index" class="my-2">
+        <b-col :sm="grid == 'large' ? 3 : 2" v-for="(obj, index) in list" :key="index" class="my-2">
           <a :href="obj.link" target="original">
-          <b-img-lazy rounded fluid :src="obj.image_url" alt="Image 1"></b-img-lazy>
+            <b-img-lazy rounded fluid :src="obj.image_url" alt="Image 1"></b-img-lazy>
           </a>
         </b-col>
       </b-row>
+
+      <infinite-loading @infinite="infiniteHandler"></infinite-loading>
+
+      <back-to-top text="Back to top"></back-to-top>
     </b-container>
     <footer class="bd-footer text-muted">
       <div class="container">
@@ -28,72 +47,124 @@
         </p>
       </div>
     </footer>
-
-    
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import InfiniteLoading from "vue-infinite-loading";
+import BackToTop from "vue-backtotop";
+
 export default {
   name: "HelloWorld",
+  components: {
+    InfiniteLoading,
+    BackToTop
+  },
   data() {
-    return { 
-      data: [],
+    return {
+      d_options: [
+        { text: "<i class='fas fa-th-large'></i>", value: "large" },
+        { text: "<i class='fas fa-th'></i>", value: "small" }
+      ],
+      grid: "large",
+      page: 0,
+      list: [],
+      manifests: [],
       label: "Images from IIIF Collection"
     };
   },
-  mounted() {
-    let param = this.$route.query;
-    let collection = param.u;
-
-    this.exec_collection(collection)
-
-    
-
+  created() {
+    this.exec_collection(this.$route.query.u);
   },
   methods: {
-    exec_collection(url){
-      console.log(url)
-      axios.get(url).then(response => {
-        
-          let collection_data = response.data;
+    infiniteHandler($state) {
+      let page = this.page;
 
-          if(url == this.$route.query.u){
-            if(collection_data.label){
-              this.label = collection_data.label
-            }
+      let manifest = this.manifests[page];
+
+      axios
+        .get(manifest)
+        .then(response => {
+          console.log(page);
+          let canvases = response.data.sequences[0].canvases;
+          for (let i = 0; i < canvases.length; i++) {
+            let canvas_obj = canvases[i];
+            let thumb =
+              canvas_obj.thumbnail.service["@id"] + "/full/400,/0/default.jpg";
+            let link =
+              "http://demo.tify.rocks/demo?manifest=" +
+              manifest +
+              "&tify={%22pages%22:[" +
+              (i + 1) +
+              "],%22view%22:%22info%22}";
+            this.list.push({
+              link: link,
+              image_url: thumb
+            });
           }
 
-          if(collection_data["collections"]){
-            let collections = collection_data["collections"]
-            for(let i = 0; i < collections.length; i++){
-              let collection_obj = collections[i]
-              this.exec_collection(collection_obj["@id"])
-            }
-          } else {
-            let manifests = collection_data["manifests"]
-            for(let i = 0; i < manifests.length; i++){
-              let manifest_obj = manifests[i]
-              this.exec_manifest(manifest_obj["@id"])
-            }
+          this.page += 1;
+          $state.loaded();
+        })
+        .catch(err => {
+          $state.reset();
+
+          if (page > 0 && page == this.manifests.length) {
+            $state.complete();
           }
-    })
+        });
     },
-    exec_manifest(url){
+    exec_collection(url) {
       axios.get(url).then(response => {
-        let canvases = response.data.sequences[0].canvases
-        for(let i = 0 ; i < canvases.length; i++){
-          let canvas_obj = canvases[i]
-          let thumb = canvas_obj.thumbnail.service["@id"]+"/full/300,/0/default.jpg"
-          let link = "http://demo.tify.rocks/demo?manifest="+url + "&tify={%22pages%22:["+(i+1)+"],%22view%22:%22info%22}"
-          this.data.push({
-                    "link": link,
-                    "image_url": thumb
-          })
+        let collection_data = response.data;
+
+        if (response.data["@type"] == "sc:Manifest") {
+          this.exec_manifest(url);
+          return;
         }
-      })
-      
+
+        if (url == this.$route.query.u) {
+          if (collection_data.label) {
+            this.label = collection_data.label;
+          }
+        }
+
+        if (collection_data["collections"]) {
+          let collections = collection_data["collections"];
+          for (let i = 0; i < collections.length; i++) {
+            let collection_obj = collections[i];
+            this.exec_collection(collection_obj["@id"]);
+          }
+        } else {
+          let manifests = collection_data["manifests"];
+          for (let i = 0; i < manifests.length; i++) {
+            let manifest_obj = manifests[i];
+            //this.exec_manifest(manifest_obj["@id"])
+            this.manifests.push(manifest_obj["@id"]);
+          }
+        }
+      });
+    },
+    exec_manifest(url) {
+      axios.get(url).then(response => {
+        let canvases = response.data.sequences[0].canvases;
+        for (let i = 0; i < canvases.length; i++) {
+          let canvas_obj = canvases[i];
+          let thumb =
+            canvas_obj.thumbnail.service["@id"] + "/full/300,/0/default.jpg";
+          let link =
+            "http://demo.tify.rocks/demo?manifest=" +
+            url +
+            "&tify={%22pages%22:[" +
+            (i + 1) +
+            "],%22view%22:%22info%22}";
+          this.list.push({
+            link: link,
+            image_url: thumb
+          });
+        }
+      });
     }
   }
 };
