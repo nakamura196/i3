@@ -114,7 +114,7 @@ export default {
             $state.complete();
           }
 
-          if(page == 0 && this.limit > 10){
+          if(page == 0 && this.limit > 50){
             $state.complete();
           }
         });
