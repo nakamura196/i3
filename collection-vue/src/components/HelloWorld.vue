@@ -30,7 +30,7 @@
       </b-container>
 
       <b-row class="my-5">
-        <b-col :sm="grid == 'large' ? 3 : 2" v-for="(obj, index) in list" :key="index" class="my-2">
+        <b-col :cols="6" :sm="grid == 'large' ? 3 : 2" v-for="(obj, index) in list" :key="index" class="my-2">
           <a :href="obj.link" target="original">
             <b-img-lazy rounded fluid :src="obj.image_url" :alt="obj.image_url"></b-img-lazy>
           </a>
@@ -140,18 +140,21 @@ export default {
           $state.loaded();
         })
         .catch(err => {
-          console.log(err)
+          
+          //console.log(err)
 
           this.limit += 1
-          $state.reset();
+          
 
           if (page > 0 && page == this.manifests.length) {
             $state.complete();
           }
 
-          if(page == 0 && this.limit > 50){
+          if(page == 0 && this.limit > 500){
             $state.complete();
           }
+
+          $state.reset();
         });
     },
     exec_collection(url) {
