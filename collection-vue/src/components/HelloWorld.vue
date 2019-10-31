@@ -37,7 +37,7 @@
         </b-col>
       </b-row>
 
-      <infinite-loading class="mb-5" @infinite="infiniteHandler"></infinite-loading>
+      <infinite-loading class="mb-5" @infinite="infiniteHandler" :distance="1000"></infinite-loading>
 
       <back-to-top text="Back to top"></back-to-top>
     </b-container>
@@ -82,7 +82,7 @@ export default {
     infiniteHandler($state) {
       let page = this.page;
 
-      let index = page
+      let manifest = null;      
 
       if(this.random){
         var arr = []
@@ -101,23 +101,23 @@ export default {
         }
 
         for(let i = 0; i < arr.length; i++){
-          
-          if(this.exists.indexOf(arr[i]) == -1){
-            index = arr[0]
-            this.exists.push(index)
+
+          let index = arr[i]
+        
+          if(this.exists.indexOf(manifest) == -1){
+            manifest = this.manifests[index];
+            this.exists.push(manifest)
             break
           }
         }
+      } else {
+        manifest = this.manifests[page]
       }
-
-      console.log(index)
-
-      let manifest = this.manifests[index];
 
       axios
         .get(manifest)
         .then(response => {
-          console.log(page);
+          //console.log("page:"+page+",exists:"+this.exists.length);
           
           let canvases = response.data.sequences[0].canvases;
           for (let i = 0; i < canvases.length; i++) {
