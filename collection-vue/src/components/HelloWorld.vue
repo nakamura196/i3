@@ -67,17 +67,52 @@ export default {
       list: [],
       manifests: [],
       label: "Images from IIIF Collection",
-      limit: 0
+      limit: 0,
+      random: false,
+      exists: []
     };
   },
   created() {
+    if(this.$route.query.random == "true"){
+      this.random = true
+    }
     this.exec_collection(this.$route.query.u);
   },
   methods: {
     infiniteHandler($state) {
       let page = this.page;
 
-      let manifest = this.manifests[page];
+      let index = page
+
+      if(this.random){
+        var arr = []
+        for(let i = 0; i < this.manifests.length; i++){
+          arr.push(i)
+        }
+
+        var a = arr.length;
+ 
+        //シャッフルアルゴリズム
+        while (a) {
+            var j = Math.floor( Math.random() * a );
+            var t = arr[--a];
+            arr[a] = arr[j];
+            arr[j] = t;
+        }
+
+        for(let i = 0; i < arr.length; i++){
+          
+          if(this.exists.indexOf(arr[i]) == -1){
+            index = arr[0]
+            this.exists.push(index)
+            break
+          }
+        }
+      }
+
+      console.log(index)
+
+      let manifest = this.manifests[index];
 
       axios
         .get(manifest)
