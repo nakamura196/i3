@@ -19,7 +19,7 @@
   * https://purl.org/dhn/isearch/
 * Images from IIIF Collection
   * http://iiif.nakamurasatoru.com/collection/
-  * ex. [捃拾帖](http://iiif.nakamurasatoru.com/collection/#/?u=https://archdataset.dl.itc.u-tokyo.ac.jp/collections/tanaka/image/collection.json)
+  * ex. [捃拾帖](http://iiif.nakamurasatoru.com/collection/#/?u=https://archdataset.dl.itc.u-tokyo.ac.jp/collections/tanaka/image/collection.json&random=true)
   
 ## Workshops
 * 2018_11_15_16_NCC_Digital_Scholarship_Workshop
