@@ -1,11 +1,13 @@
 <template>
-  <div class="bg-light">
+  <div>
     <b-navbar toggleable="lg" type="dark" variant="info">
       <b-navbar-brand>Images from IIIF Collection</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
         <!-- Right aligned nav items -->
-        <b-navbar-nav class="ml-auto"></b-navbar-nav>
+        <b-navbar-nav class="ml-auto">
+        <b-nav-item target="rm" href="https://researchmap.jp/nakamura.satoru/?lang=english">Satoru Nakamura</b-nav-item>
+        </b-navbar-nav>
       </b-collapse>
     </b-navbar>
 
@@ -35,18 +37,11 @@
         </b-col>
       </b-row>
 
-      <infinite-loading @infinite="infiniteHandler"></infinite-loading>
+      <infinite-loading class="mb-5" @infinite="infiniteHandler"></infinite-loading>
 
       <back-to-top text="Back to top"></back-to-top>
     </b-container>
-    <footer class="bd-footer text-muted">
-      <div class="container">
-        <hr />
-        <p class="mt-4 pb-5 text-center">
-          <a href="https://researchmap.jp/nakamura.satoru/?lang=english">Satoru Nakamura</a>
-        </p>
-      </div>
-    </footer>
+
   </div>
 </template>
 
@@ -67,7 +62,7 @@ export default {
         { text: "<i class='fas fa-th-large'></i>", value: "large" },
         { text: "<i class='fas fa-th'></i>", value: "small" }
       ],
-      grid: "large",
+      grid: "small",
       page: 0,
       list: [],
       manifests: [],
