@@ -32,7 +32,7 @@
       <b-row class="my-5">
         <b-col :sm="grid == 'large' ? 3 : 2" v-for="(obj, index) in list" :key="index" class="my-2">
           <a :href="obj.link" target="original">
-            <b-img-lazy rounded fluid :src="obj.image_url" alt="Image 1"></b-img-lazy>
+            <b-img-lazy rounded fluid :src="obj.image_url" :alt="obj.image_url"></b-img-lazy>
           </a>
         </b-col>
       </b-row>
