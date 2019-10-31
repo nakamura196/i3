@@ -66,7 +66,8 @@ export default {
       page: 0,
       list: [],
       manifests: [],
-      label: "Images from IIIF Collection"
+      label: "Images from IIIF Collection",
+      limit: 0
     };
   },
   created() {
@@ -82,11 +83,12 @@ export default {
         .get(manifest)
         .then(response => {
           console.log(page);
+          
           let canvases = response.data.sequences[0].canvases;
           for (let i = 0; i < canvases.length; i++) {
             let canvas_obj = canvases[i];
             let thumb =
-              canvas_obj.thumbnail.service["@id"] + "/full/400,/0/default.jpg";
+            canvas_obj.images[0].resource.service["@id"] + "/full/400,/0/default.jpg";
             let link =
               "http://demo.tify.rocks/demo?manifest=" +
               manifest +
@@ -103,9 +105,16 @@ export default {
           $state.loaded();
         })
         .catch(err => {
+          console.log(err)
+
+          this.limit += 1
           $state.reset();
 
           if (page > 0 && page == this.manifests.length) {
+            $state.complete();
+          }
+
+          if(page == 0 && this.limit > 10){
             $state.complete();
           }
         });
@@ -147,7 +156,7 @@ export default {
         for (let i = 0; i < canvases.length; i++) {
           let canvas_obj = canvases[i];
           let thumb =
-            canvas_obj.thumbnail.service["@id"] + "/full/300,/0/default.jpg";
+            canvas_obj.images[0].resource.service["@id"] + "/full/400,/0/default.jpg";
           let link =
             "http://demo.tify.rocks/demo?manifest=" +
             url +
