@@ -18,7 +18,7 @@
 <body>
 
   <nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="convert.html">IIIF Converter</a>
+    <a class="navbar-brand" href="index.html">IIIF Converter</a>
   </nav>
 
   <div class="container mt-5">
@@ -236,8 +236,6 @@
 
       }
 
-      console.log(manifest_map)
-
       var collection_uri = create({})
       var collection = {
         "@context": "http://iiif.io/api/presentation/2/context.json",
@@ -361,8 +359,6 @@
       } // end for manifest
 
       update(collection_uri, collection)
-
-      console.log(collection_uri)
 
       show_result(collection)
     })

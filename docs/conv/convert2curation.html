@@ -18,7 +18,7 @@
 <body>
 
   <nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="convert.html">IIIF Converter</a>
+    <a class="navbar-brand" href="index.html">IIIF Converter</a>
   </nav>
 
   <div class="container mt-5">
@@ -196,7 +196,47 @@
               on = on[0]["full"] + "#" + on[0]["selector"]["default"]["value"]
             }
 
-            var text = resource.resource.chars
+            var res = resource.resource
+
+            metadata = []
+
+            var text;
+            
+            if ($.isArray(res)) {
+              for(var k = 0; k < res.length; k++){
+
+                var obj = res[k]
+
+                value = $(obj["chars"]).text()
+                if(value == ""){
+                  value = obj["chars"]
+                }
+                
+                metadata.push({
+                  "label": obj["@type"],
+                  "value": value
+                })
+
+                if(obj["@type"] == "dctypes:Text"){
+                  text = value
+                }
+              }
+            } else {
+
+              obj = res
+
+              value = $(obj["chars"]).text()
+              if(value == ""){
+                value = obj["chars"]
+              }
+
+              metadata.push({
+                "label": obj["@type"],
+                "value": value
+              })
+
+              text = value
+            }
 
             anno_count += 1
 
@@ -205,12 +245,7 @@
               "@type": "sc:Canvas",
               "label": "[Annotation " + anno_count + "]",
               "description": text,
-              "metadata": [
-                {
-                  "label": "Annotation",
-                  "value": text
-                }
-              ]
+              "metadata": metadata
 
             }
 
@@ -218,14 +253,9 @@
           }
         }
       }
-
-      console.log(curation_data)
+      
 
       var result = update(curation_uri, curation_data)
-
-      console.log(curation_uri)
-
-      console.log(result)
 
       if (result == "error") {
 
