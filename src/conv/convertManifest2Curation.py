@@ -34,6 +34,8 @@ for i in range(len(files)):
 
             if "sequences" in df:
 
+                print(file)
+
                 members = []
 
                 canvases = df["sequences"][0]["canvases"]
