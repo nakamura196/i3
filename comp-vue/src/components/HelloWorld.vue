@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-light">
+  <div class="bg-light" style="word-break: break-all;">
     <b-navbar toggleable="lg" type="dark" variant="info">
       <b-navbar-brand href="http://iiif.nakamurasatoru.com/comp">IIIF Curation Comparison</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -331,6 +331,11 @@ export default {
       for (var i = 0; i < selections.length; i++) {
         var selection = selections[i];
         var members = selection.members;
+
+        var within = selection.within;
+        var manifest_uri = within["@id"]
+        var manifest_label = within["label"]
+
         for (var j = 0; j < members.length; j++) {
           var member = members[j];
 
@@ -348,6 +353,20 @@ export default {
           };
           count += 1;
 
+          //obj[m.label] = m.value;
+          obj.metadata["manifest_uri"] = manifest_uri;
+          obj.metadata["manifest_label"] = manifest_label;
+
+          //詳細検索のため？
+          if (fields_tmp.indexOf("manifest_uri") == -1) {
+            fields_tmp.push("manifest_uri");
+          }
+
+          //詳細検索のため？
+          if (fields_tmp.indexOf("manifest_label") == -1) {
+            fields_tmp.push("manifest_label");
+          }
+
           if (member["metadata"]) {
             var metadata = member["metadata"];
             for (var k = 0; k < metadata.length; k++) {
@@ -359,11 +378,13 @@ export default {
               //obj[m.label] = m.value;
               obj.metadata[label] = value;
 
+              //詳細検索のため？
               if (fields_tmp.indexOf(label) == -1) {
                 fields_tmp.push(label);
               }
 
               //-------------
+              //ファセットのため？ ??
 
               if (!field_value_index_map[label]) {
                 field_value_index_map[label] = {};
