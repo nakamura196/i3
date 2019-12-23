@@ -6,7 +6,7 @@
 * JSON Editor
   * https://purl.org/dhn/i3/edit
 * IIIF Comparison tool
-  * https://purl.org/dhn/i3/comp
+  * http://icc.jp-r.com
 * IIIF Annotation Library
   * https://purl.org/dhn/i3/al
   
@@ -18,8 +18,8 @@
 * Search Interface for IIIF Collection and Curation
   * https://purl.org/dhn/isearch/
 * Images from IIIF Collection
-  * http://iiif.nakamurasatoru.com/collection/
-  * ex. [捃拾帖](http://iiif.nakamurasatoru.com/collection/#/?u=https://archdataset.dl.itc.u-tokyo.ac.jp/collections/tanaka/image/collection.json&random=true)
+  * https://purl.org/dhn/i3/collection/
+  * ex. [捃拾帖](https://purl.org/dhn/i3/collection/#/?u=https://archdataset.dl.itc.u-tokyo.ac.jp/collections/tanaka/image/collection.json&random=true)
   
 ## Workshops
 * 2018_11_15_16_NCC_Digital_Scholarship_Workshop
