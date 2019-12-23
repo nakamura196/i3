@@ -6,7 +6,7 @@
 * JSON Editor
   * https://purl.org/dhn/i3/edit
 * IIIF Comparison tool
-  * https://purl.org/dhn/i3/comp
+  * http://icc.jp-r.com
 * IIIF Annotation Library
   * https://purl.org/dhn/i3/al
   
