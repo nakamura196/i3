@@ -189,6 +189,11 @@ export default class about extends Vue {
       icon: this.baseUrl + '/img/icons/cj.png',
       label: 'IIIF Pocketで閲覧する',
     },
+    {
+      url: this.baseUrl + '/collection/?u=',
+      icon: this.baseUrl + '/img/icons/sn.png',
+      label: 'Infinite Loading for IIIF Collectionで閲覧する',
+    },
   ]
 
   head() {
