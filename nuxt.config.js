@@ -38,7 +38,7 @@ const manifestIcon = 'img/icons/icon-512.png'
 export default {
   // Target (https://go.nuxtjs.dev/config-target)
   target: 'static',
-  // ssr: false,
+  ssr: false,
   // srcDir: 'src/',
 
   env,
