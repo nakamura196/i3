@@ -3,10 +3,8 @@
 ## This repository
 * IIIF Converter between annotation and curation
   * https://purl.org/dhn/i3/conv
-* JSON Editor
-  * https://purl.org/dhn/i3/edit
 * IIIF Comparison tool
-  * http://icc.jp-r.com
+  * https://nakamura196.github.io/icc2/
 * IIIF Annotation Library
   * https://purl.org/dhn/i3/al
   
