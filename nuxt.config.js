@@ -38,7 +38,7 @@ const manifestIcon = 'img/icons/icon-512.png'
 export default {
   // Target (https://go.nuxtjs.dev/config-target)
   target: 'static',
-  ssr: false,
+  // ssr: false,
   // srcDir: 'src/',
 
   env,
@@ -50,7 +50,7 @@ export default {
       lang,
     },
     titleTemplate: `%s - ${siteName}`,
-    title: 'hpdb',
+    title: siteName,
     meta: [
       { charset: 'utf-8' },
       { 'http-equiv': 'x-ua-compatible', content: 'ie=edge' },
