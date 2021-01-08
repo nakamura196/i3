@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <title>IIIF Applications</title>
+
+  <link rel="stylesheet" type="text/css"
+    href="https://ncsu-libraries.github.io/annona/dist/annona.css">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+</head>
+
+<body>
+
+  <div class="container my-5">
+
+    <h1 class="mt-5">iiif-annotation storyboard</h1>
+
+    <iiif-storyboard id="story"></iiif-storyboard>
+
+    <h1 class="mt-5">iiif-annotation image viewer</h1>
+
+    <iiif-annotation id="image"></iiif-annotation>
+
+  </div>
+
+  <script>
+
+    var getUrlVars = function () {
+      var vars = {};
+      var param = location.search.substring(1).split('&');
+      for (var i = 0; i < param.length; i++) {
+        var keySearch = param[i].search(/=/);
+        var key = '';
+        if (keySearch != -1) key = param[i].slice(0, keySearch);
+        var val = param[i].slice(param[i].indexOf('=', 0) + 1);
+        if (key != '') vars[key] = decodeURI(val);
+      }
+      return vars;
+    }
+
+    var vars = getUrlVars();
+
+    if (vars["annotationlist"]) {
+      var annotationlist = decodeURIComponent(vars["annotationlist"])
+      document.getElementById("story").annotationlist = annotationlist;
+
+      document.getElementById("image").annotationlist = annotationlist;
+    } else {
+      location.href = "input.html"
+    }
+
+    if (vars["manfiesturl"]) {
+      var manifesturl = decodeURIComponent(vars["manfiesturl"])
+      document.getElementById("story").manifesturl = manifesturl;
+      document.getElementById("image").manifesturl = manifesturl;
+
+    }
+
+    var script = document.createElement('script');
+    script.src = 'https://ncsu-libraries.github.io/annona/dist/annona.js';
+    document.body.appendChild(script);
+
+  </script>
+
+</body>
+
+</html>

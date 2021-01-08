@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+</head>
+
+<body>
+
+  <div class="container my-5">
+
+    <form action="./">
+      <div class="form-group">
+        <label for="exampleInputEmail1">annotationlist</label>
+        <input type="text" class="form-control" name="annotationlist" id="annotationlist" aria-describedby="emailHelp"
+          required autofocus>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">manfiesturl</label>
+        <input type="text" class="form-control" name="manfiesturl" id="manfiesturl">
+      </div>
+      <button type="submit" class="btn btn-primary my-1">Submit</button>
+      <button class="btn btn-secondary my-1" id="sample">Example1: annotationlist & manifest</button>
+      <button class="btn btn-secondary my-1" id="sample2">Example2: manifest</button>
+    </form>
+
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+
+  <script>
+
+    $("#sample").click(function () {
+      $("#annotationlist").val("https://api.jsonbin.io/b/5ff88fe263e86571a2e382bf/1")
+      $("#manfiesturl").val("https://iiif.dl.itc.u-tokyo.ac.jp/repo/iiif/fbd0479b-dbb4-4eaa-95b8-f27e1c423e4b/manifest")
+      return false;
+    })
+
+    $("#sample2").click(function () {
+      $("#annotationlist").val("https://iiif.dl.itc.u-tokyo.ac.jp/omekac/oa/items/748/annolist.json")
+      $("#manfiesturl").val("")
+      return false;
+    })
+
+  </script>
+
+</body>
+
+</html>
