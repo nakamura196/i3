@@ -34,11 +34,13 @@
         </v-col>
       </v-row>
 
-      <infinite-loading
-        class="mb-5"
-        :distance="1000"
-        @infinite="infiniteHandler"
-      ></infinite-loading>
+      <no-ssr>
+        <infinite-loading
+          class="mb-5"
+          :distance="1000"
+          @infinite="infiniteHandler"
+        ></infinite-loading>
+      </no-ssr>
     </v-container>
   </div>
 </template>
