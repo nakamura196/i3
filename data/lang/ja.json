@@ -457,5 +457,6 @@
   "IIIF Curation Map Searchで閲覧する": "IIIF Curation Map Searchで閲覧する",
   "IIIF Pocketで閲覧する" : "IIIF Pocketで閲覧する",
   "Infinite Loading for IIIF Collectionで閲覧する" : "Infinite Loading for IIIF Collectionで閲覧する",
-  "Manifest Data Acquisition Progress" : "IIIFマニフェスト（コレクション）を処理しています ..."
+  "Manifest Data Acquisition Progress" : "IIIFマニフェスト（コレクション）を処理しています ...",
+  "Collection URI" : "IIIFコレクションURI"
 }
