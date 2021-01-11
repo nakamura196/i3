@@ -20,7 +20,7 @@
           v-for="(obj, index) in list"
           :key="index"
           :cols="6"
-          :sm="grid == 'large' ? 3 : 2"
+          :sm="grid == 'large' ? 3 : 1"
           class="my-2"
         >
           <a :href="obj.link" target="original">

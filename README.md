@@ -5,7 +5,7 @@
   * https://purl.org/dhn/i3/conv
 * Images from IIIF Collection
   * https://purl.org/dhn/i3/collection/
-  * ex. [捃拾帖](https://purl.org/dhn/i3/collection/#/?u=https://archdataset.dl.itc.u-tokyo.ac.jp/collections/tanaka/image/collection.json&random=true)
+  * ex. [捃拾帖](https://purl.org/dhn/i3/collection/?u=https://archdataset.dl.itc.u-tokyo.ac.jp/collections/tanaka/image/collection.json&random=true)
 * IIIF Annotation Library
   * https://purl.org/dhn/i3/al
 

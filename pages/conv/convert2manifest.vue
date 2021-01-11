@@ -142,13 +142,16 @@ export default class about extends Vue {
         label: this.$t('IIIF Collection'),
       },
     ]
-    manifests.map((manifest: any) => {
+
+    for (let i = 0; i < manifests.length; i++) {
+      const manifest = manifests[i]
+
       items.push({
         id: manifest['@id'],
         label: manifest.label,
         attribution: manifest.attribution,
       })
-    })
+    }
     return items
   }
 
@@ -376,12 +379,13 @@ export default class about extends Vue {
             })
           }
 
-          newMetadata.map((m: any) => {
+          for (let l = 0; l < newMetadata.length; l++) {
+            const m = newMetadata[l]
             resource.push({
               '@type': 'oa:Tag',
               chars: m.label + ': ' + m.value,
             })
-          })
+          }
 
           const anno = {
             '@id': annoId,
@@ -422,8 +426,7 @@ export default class about extends Vue {
     this.collection = collection
     this.collectionUri = collectionUri
 
-    if (result === 'error') {
-    } else {
+    if (result !== 'error') {
       this.result = true
     }
   }

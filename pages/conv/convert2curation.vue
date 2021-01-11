@@ -43,7 +43,7 @@
         <ul v-if="manifestDownloaded">
           <li>
             1/4 {{ $t('IIIF Manifest Downloaded.') }}
-            <ul v-if="!curationUriGenerated">
+            <ul v-if="!curationUriGenerated && collectionProgress">
               <li>{{ collectionProgress }}</li>
             </ul>
           </li>
@@ -100,7 +100,7 @@
                   target="_blank"
                 >
                   <v-list-item-icon>
-                    <img :src="viewer.icon" width="30" />
+                    <img :src="viewer.icon" width="30" style="width: 30px" />
                   </v-list-item-icon>
                   {{ $t(viewer.label) }}
                 </v-list-item>

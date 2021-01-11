@@ -304,10 +304,14 @@
 
             let image = ''
             let label = ''
+            let width = -1
+            let height = -1
             canvases.map((canvas, i) => {
               if (canvas['@id'] == canvas_id) {
                 image = canvas.images[0].resource.service['@id']
                 label = mdata.label + ' p.' + (i + 1)
+                width = canvas.width
+                height = canvas.height
                 return
               }
             })
@@ -366,7 +370,7 @@
                 selector: {
                   type: 'FragmentSelector',
                   conformsTo: 'http://www.w3.org/TR/media-frags/',
-                  value: member['@id'].split('#')[1]
+                  value: member['@id'].split('#').length > 1 ? member['@id'].split('#')[1] : "0,0,"+width+","+height
                 }
               }
             })

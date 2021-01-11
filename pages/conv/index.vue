@@ -55,7 +55,10 @@
                           <a target="_blank" :href="example.url">{{
                             example.sub
                           }}</a></template
-                        ><template v-else>{{ example.sub }}</template> ）
+                        ><template v-else
+                          ><span v-html="example.sub"
+                        /></template>
+                        ）
                       </div>
                     </v-list-item-content>
                   </v-list-item>
@@ -117,6 +120,12 @@ export default class about extends Vue {
         manifest: 'https://kotenseki.nijl.ac.jp/biblio/200002193/manifest',
         sub: 'https://doi.org/10.20730/200002193',
         url: 'https://doi.org/10.20730/200002193',
+      },
+      {
+        label: '伊勢物語闕疑抄',
+        manifest: 'http://codh.rois.ac.jp/pmjt/book/200019758/manifest.json',
+        sub:
+          '<span>日本古典籍データセット（<a href="http://www.nijl.ac.jp/pages/cijproject/">国文研</a>所蔵）<a href="http://codh.rois.ac.jp/">CODH</a>配信</span>',
       },
     ],
     '2': [
