@@ -482,9 +482,13 @@
       // <!-- functions -->
 
       function getJson(url) {
+        let tmpUrl = url
+        if(url.includes("http://")){
+          tmpUrl = "https://njs.glitch.me/?u="+url
+        }
         var result = $.ajax({
           type: 'GET',
-          url: url,
+          url: tmpUrl,
           async: false,
           dataType: 'json'
         }).responseJSON

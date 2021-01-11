@@ -5,7 +5,14 @@
 
       <v-sheet class="pa-4 mb-10" color="grey lighten-3"
         ><template v-if="$i18n.locale === 'ja'">
-          1つ以上のカンバスからotherContentが取得できた場合には、それらに含まれるアノテーション情報のみから構成されるIIIFキュレーションリストに変換します。otherContentが1つも取得できなかった場合には、すべてのカンバス情報をIIIFキュレーションリストに変換します。</template
+          <ul>
+            <li>
+              1つ以上のカンバスからotherContentが取得できた場合には、それらに含まれるアノテーション情報のみから構成されるIIIFキュレーションリストに変換します。otherContentが1つも取得できなかった場合には、すべてのカンバス情報をIIIFキュレーションリストに変換します。
+            </li>
+            <li>
+              IIIFコレクションの場合、各マニフェストの第1カンバスの情報のみから構成されるIIIFキュレーションリストに変換します。
+            </li>
+          </ul></template
         ></v-sheet
       >
 
@@ -339,6 +346,8 @@ export default class about extends Vue {
 
             annoCount += 1
           }
+
+          return 'aaa'
         })
       } else {
         let size = canvases.length
@@ -368,8 +377,7 @@ export default class about extends Vue {
     this.generating = true
     const result = await this.update(curationUri, curationData)
 
-    if (result === 'error') {
-    } else {
+    if (result !== 'error') {
       this.result = true
     }
   }
@@ -439,9 +447,10 @@ export default class about extends Vue {
               collectionObj['@id'],
               manifestArr
             )
-            results.map((manifest) => {
-              manifestArr.push(manifest)
-            })
+
+            for (let i = 0; i < results.length; i++) {
+              manifestArr.push(results[i])
+            }
           }
         }
       } else {
