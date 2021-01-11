@@ -180,7 +180,7 @@ export default class about extends Vue {
       label: 'Javalaで閲覧する',
     },
     {
-      url: 'https://self-museum.cultural.jp/?collection=',
+      url: 'http://self-museum.cultural.jp/?collection=',
       icon: this.baseUrl + '/img/icons/favicon.ico',
       label: 'セルフミュージアムで閲覧する',
     },
@@ -215,7 +215,7 @@ export default class about extends Vue {
     this.uri = uri
 
     this.uriDownloaded = true
-    const uriData = await this.getData(uri)
+    const uriData = await this.$utils.getData(uri)
 
     if (!uriData) {
       this.uriDownloaded = false
@@ -290,7 +290,7 @@ export default class about extends Vue {
       manifestsCount += 1
       this.annoProgress = ''
 
-      let dataManifest = await this.getData(manifest)
+      let dataManifest = await this.$utils.getData(manifest)
 
       if (dataManifest == null) {
         continue
@@ -324,10 +324,37 @@ export default class about extends Vue {
         for (let j = 0; j < curationList.length; j++) {
           const curation = curationList[j]
 
-          let text = JSON.stringify(curation.metadata)
-          if (text == null) {
-            text = 'Curation [' + (j + 1) + ']'
+          let label = ''
+
+          const newMetadata = []
+          if (curation.metadata) {
+            const metadata = curation.metadata
+            for (let j = 0; j < metadata.length; j++) {
+              const m = metadata[j]
+              const f = m.label
+              const v = m.value
+
+              // アノテーションの場合
+              if (
+                f === 'Annotation' &&
+                Array.isArray(v) &&
+                v[0]['@type'] === 'oa:Annotation'
+              ) {
+                // マーカー
+                label = v[0].resource.chars
+              } else {
+                newMetadata.push({
+                  label: f,
+                  value: typeof v === 'string' ? v : JSON.stringify(v),
+                })
+              }
+            }
           }
+
+          if (label === '') {
+            label = curation.label
+          }
+
           const xywh = curation.xywh
           const annoId = annolistId + '#' + j
 
@@ -336,7 +363,7 @@ export default class about extends Vue {
           if (curation.label) {
             resource.push({
               '@type': 'dctypes:Text',
-              chars: curation.label,
+              chars: label,
               format: 'text/html',
             })
           }
@@ -349,15 +376,12 @@ export default class about extends Vue {
             })
           }
 
-          const metadata = curation.metadata
-          if (metadata) {
-            metadata.map((m: any) => {
-              resource.push({
-                '@type': 'oa:Tag',
-                chars: m.label + ': ' + m.value,
-              })
+          newMetadata.map((m: any) => {
+            resource.push({
+              '@type': 'oa:Tag',
+              chars: m.label + ': ' + m.value,
             })
-          }
+          })
 
           const anno = {
             '@id': annoId,
@@ -418,18 +442,6 @@ export default class about extends Vue {
       }
     }
     return dataManifest
-  }
-
-  async getData(manifest: string) {
-    const result = await axios
-      .get(manifest)
-      .then((response) => {
-        return response.data
-      })
-      .catch(() => {
-        return null
-      })
-    return result
   }
 
   async create(data: any): Promise<string> {

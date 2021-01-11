@@ -1,7 +1,13 @@
 <template>
   <div>
     <v-container class="my-10">
-      <h2 class="mb-10">{{ $t('Convert IIIF Manifest to Curation') }}</h2>
+      <h2 class="mb-5">{{ $t('Convert IIIF Manifest to Curation') }}</h2>
+
+      <v-sheet class="pa-4 mb-10" color="grey lighten-3"
+        ><template v-if="$i18n.locale === 'ja'">
+          1つ以上のカンバスからotherContentが取得できた場合には、それらに含まれるアノテーション情報のみから構成されるIIIFキュレーションリストに変換します。otherContentが1つも取得できなかった場合には、すべてのカンバス情報をIIIFキュレーションリストに変換します。</template
+        ></v-sheet
+      >
 
       <v-card class="mb-10" flat outlined>
         <div class="pa-5">
@@ -17,7 +23,7 @@
               localePath({
                 name: 'conv-convert2curation',
                 query: {
-                  manifest,
+                  u: manifest,
                 },
               })
             "
@@ -28,12 +34,20 @@
 
       <div v-if="!result">
         <ul v-if="manifestDownloaded">
-          <li>1/4 {{ $t('IIIF Manifest Downloaded.') }}</li>
+          <li>
+            1/4 {{ $t('IIIF Manifest Downloaded.') }}
+            <ul v-if="!curationUriGenerated">
+              <li>{{ collectionProgress }}</li>
+            </ul>
+          </li>
           <li v-if="curationUriGenerated">
             2/4 {{ $t('Generating Curation URI.') }}
           </li>
-          <li v-if="canvasProgress">
-            {{ canvasProgress }}
+          <li v-if="manifestProgress">
+            {{ manifestProgress }}
+            <ul v-if="canvasProgress">
+              <li>{{ canvasProgress }}</li>
+            </ul>
           </li>
           <li v-if="generating">
             4/4 {{ $t('Generating IIIF Curation List ...') }}
@@ -113,7 +127,9 @@ export default class about extends Vue {
   curationUriGenerated: boolean = false
   result: boolean = false
   curationUri: string = ''
+  collectionProgress: string = ''
   canvasProgress: string = ''
+  manifestProgress: string = ''
   manifest: string = ''
   generating: boolean = false
 
@@ -131,7 +147,7 @@ export default class about extends Vue {
       label: 'IIIF Curation Playerで閲覧する',
     },
     {
-      url: 'https://self-museum.cultural.jp/?collection=',
+      url: 'http://self-museum.cultural.jp/?collection=',
       icon: this.baseUrl + '/img/icons/favicon.ico',
       label: 'セルフミュージアムで閲覧する',
     },
@@ -166,23 +182,31 @@ export default class about extends Vue {
     this.manifest = manifest
 
     this.manifestDownloaded = true
-    const manifestData = await this.getData(manifest)
+    const uriData = await this.$utils.getData(manifest)
 
-    if (!manifestData) {
+    const dataType = uriData['@type']
+
+    let manifests: string[] = []
+
+    const collectionFlag = dataType === 'sc:Collection'
+
+    if (collectionFlag) {
+      manifests = await this.getCollection(manifest, manifests)
+    } else {
+      manifests = [manifest]
+    }
+
+    if (manifests.length === 0) {
       this.manifestDownloaded = false
       return
     }
-
-    const canvases = manifestData.sequences[0].canvases
-
-    let annoCount = 1
 
     this.curationUriGenerated = true
 
     const curationUri = (await this.create({})) || ''
     this.curationUri = curationUri
 
-    const members: any = []
+    const selections: any[] = []
 
     const curationData = {
       '@context': [
@@ -193,57 +217,102 @@ export default class about extends Vue {
       '@id': curationUri,
       label: 'Automatic curation by IIIF Converter',
       viewingHint: 'grid',
-      selections: [
-        {
-          '@id': curationUri + '/range1',
-          '@type': 'sc:Range',
-          label: 'Automatic curation by IIIF Converter',
-          members,
-          within: {
-            '@id': manifest, // manifest_data["@id"],
-            '@type': 'sc:Manifest',
-            label: manifestData.label,
-          },
-        },
-      ],
+      selections,
     }
 
-    for (let i = 0; i < canvases.length; i++) {
-      const canvas = canvases[i]
+    const annos = []
 
-      this.canvasProgress =
+    let annoCount = 1
+
+    for (let k = 0; k < manifests.length; k++) {
+      const manifest = manifests[k]
+
+      this.manifestProgress =
         '3/4 ' +
-        this.$t('Canvas Data Acquisition Progress') +
+        this.$t('Manifest Data Acquisition Progress') +
         ' ' +
-        (i + 1) +
+        (k + 1) +
         '/' +
-        canvases.length
+        manifests.length
 
-      if (canvas.otherContent) {
-        const annolistData = await this.getData(canvas.otherContent[0]['@id'])
+      const manifestData = await this.$utils.getData(manifest)
 
-        if (!annolistData) {
-          continue
-        }
+      const members: any = []
 
-        const resources = annolistData.resources
-        for (let j = 0; j < resources.length; j++) {
-          const resource = resources[j]
-          let on = resource.on
+      selections.push({
+        '@id': curationUri + '/range' + (k + 1),
+        '@type': 'sc:Range',
+        label: 'Automatic curation by IIIF Converter',
+        members,
+        within: {
+          '@id': manifest, // manifest_data["@id"],
+          '@type': 'sc:Manifest',
+          label: manifestData.label,
+        },
+      })
 
-          if (Array.isArray(on)) {
-            on = on[0].full + '#' + on[0].selector.default.value
+      const canvases = manifestData.sequences[0].canvases
+
+      for (let i = 0; i < canvases.length; i++) {
+        const canvas = canvases[i]
+
+        this.canvasProgress =
+          this.$t('Canvas Data Acquisition Progress') +
+          ' ' +
+          (i + 1) +
+          '/' +
+          canvases.length
+
+        if (canvas.otherContent) {
+          const annolistData = await this.$utils.getData(
+            canvas.otherContent[0]['@id']
+          )
+
+          if (!annolistData) {
+            continue
           }
 
-          const res = resource.resource
+          annos.push(annolistData)
+        }
+      }
 
-          const metadata = []
+      if (annos.length > 0 && !collectionFlag) {
+        annos.map((annolistData) => {
+          const resources = annolistData.resources
+          for (let j = 0; j < resources.length; j++) {
+            const resource = resources[j]
+            let on = resource.on
 
-          let text = ''
+            if (Array.isArray(on)) {
+              on = on[0].full + '#' + on[0].selector.default.value
+            }
 
-          if (Array.isArray(res)) {
-            for (let k = 0; k < res.length; k++) {
-              const obj = res[k]
+            const res = resource.resource
+
+            const metadata = []
+
+            let text = ''
+
+            if (Array.isArray(res)) {
+              for (let k = 0; k < res.length; k++) {
+                const obj = res[k]
+
+                let value = format(obj.chars)
+                if (value === '') {
+                  value = obj.chars
+                }
+
+                metadata.push({
+                  label: obj['@type'],
+                  value,
+                })
+
+                if (obj['@type'] === 'dctypes:Text') {
+                  text = value
+                }
+              }
+            } else {
+              const obj = res
 
               let value = format(obj.chars)
               if (value === '') {
@@ -255,37 +324,43 @@ export default class about extends Vue {
                 value,
               })
 
-              if (obj['@type'] === 'dctypes:Text') {
-                text = value
-              }
-            }
-          } else {
-            const obj = res
-
-            let value = format(obj.chars)
-            if (value === '') {
-              value = obj.chars
+              text = value
             }
 
-            metadata.push({
-              label: obj['@type'],
-              value,
-            })
+            const member: any = {
+              '@id': on,
+              '@type': 'sc:Canvas',
+              label: text,
+              description: '[Annotation ' + annoCount + ']',
+              metadata,
+            }
 
-            text = value
+            members.push(member)
+
+            annoCount += 1
           }
+        })
+      } else {
+        let size = canvases.length
+        if (collectionFlag) {
+          size = 1
+        }
+
+        let label = manifestData.label
+        if (Array.isArray(label)) {
+          label = label[0]['@value']
+        }
+
+        for (let i = 0; i < size; i++) {
+          const canvas = canvases[i]
 
           const member: any = {
-            '@id': on,
+            '@id': canvas['@id'],
             '@type': 'sc:Canvas',
-            label: text,
-            description: '[Annotation ' + annoCount + ']',
-            metadata,
+            label: label + ' [' + (i + 1) + ']',
           }
 
           members.push(member)
-
-          annoCount += 1
         }
       }
     }
@@ -297,18 +372,6 @@ export default class about extends Vue {
     } else {
       this.result = true
     }
-  }
-
-  async getData(manifest: string) {
-    const result = await axios
-      .get(manifest)
-      .then((response) => {
-        return response.data
-      })
-      .catch(() => {
-        return null
-      })
-    return result
   }
 
   async create(data: any) {
@@ -354,8 +417,44 @@ export default class about extends Vue {
       })
   }
 
-  submit1() {
-    return 'aaa'
+  async getCollection(url: string, manifestArr: string[]) {
+    this.collectionProgress = url
+    // 取得プロセス
+    const collectionData = await this.$utils.getData(url)
+    if (collectionData) {
+      if (collectionData.collections) {
+        const collections = collectionData.collections
+        for (let i = 0; i < collections.length; i++) {
+          const collectionObj = collections[i]
+          if (collectionObj.manifests) {
+            const manifests = collectionObj.manifests
+            for (let j = 0; j < manifests.length; j++) {
+              const manifestObj = manifests[j]
+              if (manifestObj['@id']) {
+                manifestArr.push(manifestObj['@id'])
+              }
+            }
+          } else {
+            const results = await this.getCollection(
+              collectionObj['@id'],
+              manifestArr
+            )
+            results.map((manifest) => {
+              manifestArr.push(manifest)
+            })
+          }
+        }
+      } else {
+        const manifests = collectionData.manifests
+        for (let i = 0; i < manifests.length; i++) {
+          const manifestObj = manifests[i]
+          if (manifestObj['@id']) {
+            manifestArr.push(manifestObj['@id'])
+          }
+        }
+      }
+    }
+    return manifestArr
   }
 }
 </script>
