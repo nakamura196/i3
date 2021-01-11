@@ -3,18 +3,22 @@
     <div>
       <v-app-bar color="primary" dark>
         <v-toolbar-title>
-          <nuxt-link
-            :to="localePath({ name: 'collection' })"
+          <a
+            :href="
+              localePath({
+                name: 'collection',
+              })
+            "
             style="text-decoration: none; color: white"
           >
             {{ 'Infinite Loading for IIIF Collection' }}
-          </nuxt-link>
+          </a>
         </v-toolbar-title>
 
         <v-spacer />
 
         <v-menu offset-y>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn depressed color="primary" btn v-on="on">
               <v-icon class="mr-2">mdi-translate</v-icon>
               <template v-if="$vuetify.breakpoint.name != 'xs'">

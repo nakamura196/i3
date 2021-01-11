@@ -3,8 +3,11 @@ import axios from 'axios'
 // /plugins/logger.ts
 export class Utils {
   async getData(uri: string) {
+    if (!uri) {
+      return null
+    }
     if (uri.includes('http://')) {
-      uri = 'https://njs.glitch.me/?u=' + uri
+      uri = process.env.C_URL + uri
     }
     const result = await axios
       .get(uri)
