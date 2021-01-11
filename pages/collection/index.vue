@@ -1,70 +1,46 @@
 <template>
   <div>
     <v-container class="my-5">
-      <template v-if="!ready">
-        <v-text-field
-          v-model="u"
-          :label="$t('Collection URI')"
-          required
-        ></v-text-field>
-
-        <v-btn
-          color="primary"
-          :href="
-            localePath({
-              name: 'collection',
-              query: {
-                u,
-              },
-            })
-          "
-          >{{ $t('Submit') }}</v-btn
-        >
-      </template>
-
-      <template v-else>
-        <h2>{{ label }}</h2>
-
-        <div class="text-right">
-          <v-btn-toggle v-model="grid" mandatory>
-            <v-btn
-              v-for="(dOption, index) in dOptions"
-              :key="index"
-              :class="[dOption.value == grid ? 'active' : '']"
-              :value="dOption.value"
-            >
-              <v-icon>{{ dOption.text }}</v-icon>
-            </v-btn>
-          </v-btn-toggle>
-        </div>
-
-        <v-row class="my-5">
-          <v-col
-            v-for="(obj, index) in list"
+      <h2 class="my-5">{{ label }}</h2>
+      <div class="text-right">
+        <v-btn-toggle v-model="grid" mandatory>
+          <v-btn
+            v-for="(dOption, index) in dOptions"
             :key="index"
-            :cols="6"
-            :sm="grid == 'large' ? 3 : 1"
-            class="my-2"
+            :class="[dOption.value == grid ? 'active' : '']"
+            :value="dOption.value"
           >
-            <a :href="obj.link" target="original">
-              <v-img
-                rounded
-                fluid
-                :src="obj.image_url"
-                :alt="obj.image_url"
-              ></v-img>
-            </a>
-          </v-col>
-        </v-row>
+            <v-icon>{{ dOption.text }}</v-icon>
+          </v-btn>
+        </v-btn-toggle>
+      </div>
 
-        <client-only>
-          <infinite-loading
-            class="mb-5"
-            :distance="1000"
-            @infinite="infiniteHandler"
-          ></infinite-loading>
-        </client-only>
-      </template>
+      <v-row class="my-5">
+        <v-col
+          v-for="(obj, index) in list"
+          :key="index"
+          :cols="6"
+          :sm="grid == 'large' ? 3 : 1"
+          class="my-2"
+        >
+          <a :href="obj.link" target="original">
+            <v-img
+              rounded
+              fluid
+              :src="obj.image_url"
+              :alt="obj.image_url"
+            ></v-img>
+          </a>
+        </v-col>
+      </v-row>
+
+      <client-only>
+        <infinite-loading
+          class="mb-5"
+          :distance="1000"
+          @infinite="infiniteHandler"
+        ></infinite-loading>
+      </client-only>
     </v-container>
   </div>
 </template>
@@ -84,10 +60,6 @@ export default class about extends Vue {
   baseUrl: string = process.env.BASE_URL || ''
 
   manifest: string = ''
-
-  u: string = ''
-
-  ready: boolean = false
 
   dOptions: any[] = [
     { text: 'mdi-view-grid', value: 'large' },
@@ -119,16 +91,12 @@ export default class about extends Vue {
     if (!this.$route.query.u) {
       return
     }
-
-    this.ready = true
-
     const u = this.$route.query.u + ''
-    this.u = u
 
     this.execCollection(u)
   }
 
-  async infiniteHandler($state: any) {
+  infiniteHandler($state: any) {
     const page = this.page
 
     let manifest: any = null
@@ -161,8 +129,6 @@ export default class about extends Vue {
     } else {
       manifest = this.manifests[page]
     }
-    const response = await this.$utils.getData(manifest)
-    console.log({ response })
 
     axios
       .get(manifest)
