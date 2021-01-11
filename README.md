@@ -24,8 +24,6 @@
 ## Other repository
 * パズル Powered by Puzzles! Powered by IIIF
   * https://purl.org/dhn/jpsearch/puzzle
-* Text Conversion to Kuzushiji
-  * https://purl.org/dhn/jpsearch/kuzushiji
 * Search Interface for IIIF Collection and Curation
   * https://nakamura196.github.io/icc2/
   
