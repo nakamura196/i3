@@ -35,6 +35,8 @@ const shortName = 'IIIF'
 const manifestIcon = 'img/icons/icon-512.png'
 // const splashscreens = cdnPath + 'img/splashscreens/'
 
+console.log({ env })
+
 export default {
   // Target (https://go.nuxtjs.dev/config-target)
   target: 'static',

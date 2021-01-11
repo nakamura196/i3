@@ -7,7 +7,7 @@
         <v-spacer />
 
         <v-menu offset-y>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn depressed btn v-on="on">
               <v-icon class="mr-2">mdi-translate</v-icon>
               <template v-if="$vuetify.breakpoint.name != 'xs'">
@@ -36,7 +36,10 @@
     <v-footer :dark="true" class="mt-0">
       <v-container>
         <div class="text-center">
-          Developed by <a href="https://researchmap.jp/nakamura.satoru/">Satoru Nakamura</a> &amp; <a href="https://researchmap.jp/knagasaki/">Kiyonori Nagasaki</a>
+          Developed by
+          <a href="https://researchmap.jp/nakamura.satoru/">Satoru Nakamura</a>
+          &amp;
+          <a href="https://researchmap.jp/knagasaki/">Kiyonori Nagasaki</a>
         </div>
       </v-container>
     </v-footer>

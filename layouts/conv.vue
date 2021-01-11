@@ -14,7 +14,7 @@
         <v-spacer />
 
         <v-menu offset-y>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn depressed color="primary" btn v-on="on">
               <v-icon class="mr-2">mdi-translate</v-icon>
               <template v-if="$vuetify.breakpoint.name != 'xs'">
