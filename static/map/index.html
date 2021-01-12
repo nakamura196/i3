@@ -139,7 +139,7 @@
 
     <footer class="footer mt-auto py-3 bg-dark">
       <div class="container text-center">
-        <a href="https://github.com/nakamura196/i3" class="text-muted"><i class="fab fa-github"></i></a>
+        <a href="https://github.com/nakamura196/i3#iiif-curation-map-search" class="text-muted"><i class="fab fa-github"></i></a>
       </div>
     </footer>
 
@@ -173,14 +173,20 @@
                   let values = m.value
                   values = Array.isArray(values) ? values : [values]
                   values.map(value => {
-                    if (!metadataObj[label].includes(value)) {
+                    // アノテーションの場合
+                    if (
+                      label === 'Annotation' &&
+                      value['@type'] === 'oa:Annotation'
+                    ) {
+                      // マーカー
+                      const bodyValueStr = jQuery('<div>' + value.resource.chars.split("<br/>").join(" ") + '</div>').text()
+                      metadataObj[label].push(bodyValueStr)
+                    } else if (!metadataObj[label].includes(value)) {
                       metadataObj[label].push(value)
                     }
                   })
                 })
-
               }
-
               return metadataObj
             }
 
