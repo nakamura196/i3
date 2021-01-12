@@ -73,7 +73,7 @@
               <v-list>
                 <v-list-item :href="curationUri" target="_blank">
                   <v-list-item-icon>
-                    <img
+                    <v-img
                       :src="baseUrl + '/img/icons/json-ld-data-32.png'"
                       width="30"
                     />
@@ -101,7 +101,7 @@
                   target="_blank"
                 >
                   <v-list-item-icon>
-                    <img :src="viewer.icon" width="30" style="width: 30px" />
+                    <v-img :src="viewer.icon" width="30" />
                   </v-list-item-icon>
                   {{ $t(viewer.label) }}
                 </v-list-item>

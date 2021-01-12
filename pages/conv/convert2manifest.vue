@@ -63,7 +63,7 @@
                   target="_blank"
                 >
                   <v-list-item-icon>
-                    <img
+                    <v-img
                       :src="baseUrl + '/img/icons/iiif-logo.svg'"
                       width="30"
                     />
@@ -94,7 +94,7 @@
                   target="_blank"
                 >
                   <v-list-item-icon>
-                    <img :src="viewer.icon" width="30" />
+                    <v-img :src="viewer.icon" width="30" />
                   </v-list-item-icon>
                   {{ $t(viewer.label) }}
                 </v-list-item>
