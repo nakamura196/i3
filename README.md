@@ -1,15 +1,10 @@
 # Tools related IIIF
 
-## This repository
-* IIIF Converter between annotation and curation
-  * https://purl.org/dhn/i3/conv
-* Images from IIIF Collection
-  * https://purl.org/dhn/i3/collection/
-  * ex. [捃拾帖](https://purl.org/dhn/i3/collection/?u=https://archdataset.dl.itc.u-tokyo.ac.jp/collections/tanaka/image/collection.json&random=true)
-* IIIF Annotation Library
-  * https://purl.org/dhn/i3/al
+## IIIF Converter
 
-## IIIF Converter between annotation and curation
+IIIF Converter between annotation and curation
+
+https://purl.org/dhn/i3/conv
 
 ### 更新履歴
 
@@ -21,6 +16,16 @@
     * IIIFコレクションの場合、各マニフェストの第1カンバスの情報のみから構成されるIIIFキュレーションリストに変換します。
   * マーカー形式のIIIFキュレーションリストの変換方式を更新
   
+## Infinite Loading for IIIF Collection
+
+https://purl.org/dhn/i3/collection/
+
+ex. [捃拾帖](https://purl.org/dhn/i3/collection/?u=https://archdataset.dl.itc.u-tokyo.ac.jp/collections/tanaka/image/collection.json&random=true)
+  
+## IIIF Annotation Library
+
+https://purl.org/dhn/i3/al
+  
 ## Other repository
 * パズル Powered by Puzzles! Powered by IIIF
   * https://purl.org/dhn/jpsearch/puzzle
@@ -30,3 +35,8 @@
 ## Workshops
 * 2018_11_15_16_NCC_Digital_Scholarship_Workshop
   * https://purl.org/dhn/i3/materials/2018_11_15_16_NCC_Digital_Scholarship_Workshop
+  
+  
+## Developer
+* [Satoru Nakamura](https://researchmap.jp/nakamura.satoru?lang=en)
+* [Kiyonori Nagasaki](https://researchmap.jp/knagasaki?lang=en)
