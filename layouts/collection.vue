@@ -5,6 +5,7 @@
         <v-toolbar-title>
           <a
             :href="
+              baseUrl +
               localePath({
                 name: 'collection',
               })
@@ -47,11 +48,10 @@
     <v-footer :dark="true" class="mt-0">
       <v-container>
         <div class="text-center">
-          Developed by
           <a
-            href="https://researchmap.jp/nakamura.satoru/"
+            href="https://github.com/nakamura196/i3/"
             style="color: white; text-decoration: none"
-            >Satoru Nakamura</a
+            ><v-icon>mdi-github</v-icon></a
           >
         </div>
       </v-container>

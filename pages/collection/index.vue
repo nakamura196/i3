@@ -1,19 +1,50 @@
 <template>
   <div>
     <v-container class="my-5">
-      <h2 class="my-5">{{ label }}</h2>
-      <div class="text-right">
-        <v-btn-toggle v-model="grid" mandatory>
-          <v-btn
-            v-for="(dOption, index) in dOptions"
-            :key="index"
-            :class="[dOption.value == grid ? 'active' : '']"
-            :value="dOption.value"
+      <template v-if="!ready">
+        <v-text-field
+          v-model="u"
+          :label="$t('Collection URI')"
+          required
+        ></v-text-field>
+
+        <v-btn
+          color="primary"
+          :href="
+            baseUrl +
+            localePath({
+              name: 'collection',
+              query: {
+                u,
+              },
+            })
+          "
+          >{{ $t('Submit') }}</v-btn
+        >
+
+        <p class="mt-5">
+          <a
+            href="https://github.com/nakamura196/i3#infinite-loading-for-iiif-collection"
+            >{{ $t('Example') }}</a
           >
-            <v-icon>{{ dOption.text }}</v-icon>
-          </v-btn>
-        </v-btn-toggle>
-      </div>
+        </p></template
+      >
+
+      <template v-else>
+        <h2>{{ label }}</h2>
+        <div class="text-right">
+          <v-btn-toggle v-model="grid" mandatory>
+            <v-btn
+              v-for="(dOption, index) in dOptions"
+              :key="index"
+              :class="[dOption.value == grid ? 'active' : '']"
+              :value="dOption.value"
+            >
+              <v-icon>{{ dOption.text }}</v-icon>
+            </v-btn>
+          </v-btn-toggle>
+        </div>
+      </template>
 
       <v-row class="my-5">
         <v-col
@@ -61,6 +92,9 @@ export default class about extends Vue {
 
   manifest: string = ''
 
+  u: string = ''
+  ready: boolean = false
+
   dOptions: any[] = [
     { text: 'mdi-view-grid', value: 'large' },
     { text: 'mdi-view-module', value: 'small' },
@@ -91,7 +125,11 @@ export default class about extends Vue {
     if (!this.$route.query.u) {
       return
     }
+
+    this.ready = true
+
     const u = this.$route.query.u + ''
+    this.u = u
 
     this.execCollection(u)
   }

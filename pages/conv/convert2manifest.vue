@@ -14,6 +14,7 @@
           <v-btn
             color="primary"
             :href="
+              baseUrl +
               localePath({
                 name: 'conv-convert2manifest',
                 query: {
