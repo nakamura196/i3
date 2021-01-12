@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container class="my-5">
-      <template v-if="!ready">
+      <div v-show="!ready">
         <v-text-field
           v-model="u"
           :label="$t('Collection URI')"
@@ -27,10 +27,10 @@
             href="https://github.com/nakamura196/i3#infinite-loading-for-iiif-collection"
             >{{ $t('Example') }}</a
           >
-        </p></template
-      >
+        </p>
+      </div>
 
-      <template v-else>
+      <div v-show="ready">
         <h2>{{ label }}</h2>
         <div class="text-right">
           <v-btn-toggle v-model="grid" mandatory>
@@ -44,7 +44,7 @@
             </v-btn>
           </v-btn-toggle>
         </div>
-      </template>
+      </div>
 
       <v-row class="my-5">
         <v-col
