@@ -15,6 +15,17 @@ https://purl.org/dhn/i3/conv
     * 1つ以上のカンバスからotherContentが取得できた場合には、それらに含まれるアノテーション情報のみから構成されるIIIFキュレーションリストに変換します。otherContentが1つも取得できなかった場合には、すべてのカンバス情報をIIIFキュレーションリストに変換します。
     * IIIFコレクションの場合、各マニフェストの第1カンバスの情報のみから構成されるIIIFキュレーションリストに変換します。
   * マーカー形式のIIIFキュレーションリストの変換方式を更新
+
+## IIIF Curation Map Search
+
+IIIFキュレーションリストに対して、IIIF Content Search APIライクな機能を提供します。
+
+https://purl.org/dhn/i3/map/
+
+ex. [江戸マップ・御江戸大名小路絵図（CODH編集）](https://purl.org/dhn/i3/map/?curation=http://codh.rois.ac.jp/edo-maps/owariya/01/1849/ndl.json)
+
+* 2021-01-13
+  * マーカー形式のIIIFキュレーションリストの表示方式を更新
   
 ## Infinite Loading for IIIF Collection
 
