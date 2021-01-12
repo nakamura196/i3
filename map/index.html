@@ -362,12 +362,14 @@
                     }
                   }
 
+                  const bodyValueStr = jQuery('<div>' + bodyValue.split("<br/>").join(" ") + '</div>').text()
+
                   if (member.related) {
                     bodyValue =
                       "<a target='app' href='" +
                       member.related +
                       "'>" +
-                      bodyValue +
+                      bodyValueStr +
                       '</a>'
                   }
 
@@ -391,7 +393,7 @@
                         value:
                           m.label +
                           ': ' +
-                          (Array.isArray(m.value) ? m.value.join(',') : m.value)
+                          (Array.isArray(m.value) ? m.value.join(', ') : m.value)
                       })
                     })
                   }
@@ -399,7 +401,7 @@
                   map[canvas_id].annos.push({
                     '@context': 'http://www.w3.org/ns/anno.jsonld',
                     id: member['@id'],
-                    label: jQuery('<div>' + bodyValue.split("<br/>").join(" ") + '</div>').text(),
+                    label: bodyValueStr,
                     type: 'Annotation',
                     body,
                     target: {
