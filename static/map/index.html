@@ -35,7 +35,12 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@recogito/annotorious-openseadragon@2.1.0/dist/annotorious.min.css"
     />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha256-UzFD2WYH2U1dQpKDjjZK72VtPeWP50NoJjd26rnAdUI=" crossorigin="anonymous" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
+      integrity="sha256-UzFD2WYH2U1dQpKDjjZK72VtPeWP50NoJjd26rnAdUI="
+      crossorigin="anonymous"
+    />
   </head>
   <body>
     <div>
@@ -58,90 +63,109 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ml-auto">
-            <li class="nav-item active">
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="https://github.com/nakamura196/i3#iiif-curation-map-search"
+                ><i class="fab fa-github"></i
+              ></a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" id="icv">IIIF Curation Viewer</a>
             </li>
           </ul>
         </div>
       </nav>
 
-      <div class="container-fluid mt-3">
-        <div id="openseadragon" style="width: 100%; height: 600px"></div>
-        <div
-          class="py-4"
-          style="background-color: #f8f9fa; max-height: 200px; overflow-y: auto"
-          id="labels"
-        ></div>
-      </div>
-
-      <div class="container my-5">
+      <!-- background-color: #f8f9fa; -->
+      <div class="container-fluid my-3">
         <div class="row">
-          <div class="col-lg-4">
-            <div class="card mb-4">
-              <div class="card-header">アノテーション</div>
-              <div class="card-body">
-                <table class="table table-bordered">
-                  <tbody>
-                    <tr>
-                      <th width="60%">総アノテーション数</th>
-                      <td id="all"></td>
-                    </tr>
+          <div class="col-lg-5">
+            <div
+              class="p-4"
+              style="max-height: 600px; overflow-y: auto"
+              id="left"
+            >
+              <div id="labels" class="mb-4"></div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="card mb-4">
+                    <div class="card-header">対象画像（カンバス）</div>
+                    <ul class="list-group list-group-flush" id="list"></ul>
+                  </div>
+                </div>
 
-                    <tr>
-                      <th>検索条件に合致したアノテーション数</th>
-                      <td id="annos"></td>
-                    </tr>
+                <div class="col-lg-6 mb-4">
+                  <div class="card">
+                    <div class="card-header">キーワード検索</div>
+                    <div class="card-body">
+                      <form>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="keyword"
+                          placeholder="検索語を入力してください。"
+                        />
+                        <button type="submit" class="btn btn-primary mt-3">
+                          検索
+                        </button>
+                      </form>
+                      <div class="mt-3" id="labels"></div>
+                    </div>
+                  </div>
+                </div>
 
-                    <tr>
-                      <th>検索条件に合致した画像（カンバス）数</th>
-                      <td id="images"></td>
-                    </tr>
+                <div class="col-lg-12">
+                  <div class="card mb-4">
+                    <div class="card-header">アノテーション</div>
+                    <div class="card-body">
+                      <table class="table table-bordered">
+                        <tbody>
+                          <tr>
+                            <th width="60%">総アノテーション数</th>
+                            <td id="all"></td>
+                          </tr>
 
-                    <tr>
-                      <th>当該画像（カンバス）に含まれるアノテーション数</th>
-                      <td id="target"></td>
-                    </tr>
-                  </tbody>
-                </table>
+                          <tr>
+                            <th>検索条件に合致したアノテーション数</th>
+                            <td id="annos"></td>
+                          </tr>
+
+                          <tr>
+                            <th>検索条件に合致した画像（カンバス）数</th>
+                            <td id="images"></td>
+                          </tr>
+
+                          <tr>
+                            <th>
+                              当該画像（カンバス）に含まれるアノテーション数
+                            </th>
+                            <td id="target"></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
-          <div class="col-lg-4">
-            <div class="card mb-4">
-              <div class="card-header">対象画像（カンバス）</div>
-              <ul class="list-group list-group-flush" id="list"></ul>
-            </div>
-          </div>
-
-          <div class="col-lg-4 mb-4">
-            <div class="card">
-              <div class="card-header">キーワード検索</div>
-              <div class="card-body">
-                <form>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="keyword"
-                    placeholder="検索語を入力してください。"
-                  />
-                  <button type="submit" class="btn btn-primary mt-3">
-                    検索
-                  </button>
-                </form>
-                <div class="mt-3" id="labels"></div>
-              </div>
-            </div>
+          <div class="col-lg-7">
+            <div id="openseadragon" style="width: 100%; height: 600px"></div>
           </div>
         </div>
       </div>
+
+      <div class="container my-5" style="display: none"></div>
     </div>
 
+    <!-- 
     <footer class="footer mt-auto py-3 bg-dark">
       <div class="container text-center">
         <a href="https://github.com/nakamura196/i3#iiif-curation-map-search" class="text-muted"><i class="fab fa-github"></i></a>
       </div>
     </footer>
+    -->
 
     <script
       type="text/javascript"
@@ -159,433 +183,443 @@
     ></script>
 
     <script>
-
-            function convertMetadataArray2Map(metadata){
-
-              const metadataObj = {}
-              if(metadata){
-
-                metadata.map(m => {
-                  const label = m.label
-                  if (!metadataObj[label]) {
-                    metadataObj[label] = []
-                  }
-                  let values = m.value
-                  values = Array.isArray(values) ? values : [values]
-                  values.map(value => {
-                    // アノテーションの場合
-                    if (
-                      label === 'Annotation' &&
-                      value['@type'] === 'oa:Annotation'
-                    ) {
-                      // マーカー
-                      const bodyValueStr = jQuery('<div>' + value.resource.chars.split("<br/>").join(" ") + '</div>').text()
-                      metadataObj[label].push(bodyValueStr)
-                    } else if (!metadataObj[label].includes(value)) {
-                      metadataObj[label].push(value)
-                    }
-                  })
-                })
+      function convertMetadataArray2Map(metadata) {
+        const metadataObj = {}
+        if (metadata) {
+          metadata.map((m) => {
+            const label = m.label
+            if (!metadataObj[label]) {
+              metadataObj[label] = []
+            }
+            let values = m.value
+            values = Array.isArray(values) ? values : [values]
+            values.map((value) => {
+              // アノテーションの場合
+              if (
+                label === 'Annotation' &&
+                value['@type'] === 'oa:Annotation'
+              ) {
+                // マーカー
+                const bodyValueStr = jQuery(
+                  '<div>' +
+                    value.resource.chars.split('<br/>').join(' ') +
+                    '</div>'
+                ).text()
+                metadataObj[label].push(bodyValueStr)
+              } else if (!metadataObj[label].includes(value)) {
+                metadataObj[label].push(value)
               }
-              return metadataObj
-            }
-
-            function search(member, arg){
-              const metadata = member.metadata
-              const metadataObj = convertMetadataArray2Map(metadata)
-              let flg = true
-              for (let key in arg) {
-                  const values = arg[key]
-                  if (key == 'curation') {
-                    continue
-                  } else if (key == 'q') {
-                    values.map(value => {
-                      if (member.label.toLowerCase().includes(value.toLowerCase())) {
-                        return
-                      }
-                      let flg2 = false
-                      for (let f in metadataObj) {
-                        metadataObj[f].map(v => {
-                          if (
-                            String(v)
-                              .toLowerCase()
-                              .includes(value.toLowerCase())
-                          ) {
-                            flg2 = true
-                            return
-                          }
-                        })
-                      }
-                      if (!flg2) {
-                        flg = false
-                      }
-                    })
-                  } else if (key.includes('q-')) {
-                    const field = key.replace('q-', '')
-                    values.map(value => {
-                      let flg2 = false
-                      if (!metadataObj[field]) {
-                        flg = false
-                        return
-                      } else {
-                        metadataObj[field].map(v => {
-                          if (
-                            String(v)
-                              .toLowerCase()
-                              .includes(value.toLowerCase())
-                          ) {
-                            flg2 = true
-                            return
-                          }
-                        })
-                      }
-
-                      if (!flg2) {
-                        flg = false
-                      }
-                    })
-                  } else if (key.includes('fc-')) {
-                    const field = key.replace('fc-', '')
-                    values.map(value => {
-                      let flg2 = false
-                      if (!metadataObj[field]) {
-                        flg = false
-                        return
-                      } else {
-                        metadataObj[field].map(v => {
-                          if (String(v).toLowerCase() == value.toLowerCase()) {
-                            flg2 = true
-                            return
-                          }
-                        })
-                      }
-
-                      if (!flg2) {
-                        flg = false
-                      }
-                    })
-                  }
-                }
-
-                return flg
-            }
-
-            var arg = getParams()
-
-            if (arg.q) {
-              $('#keyword').val(arg.q)
-            }
-
-            const curation_uri = arg.curation[0]
-
-            $("#icv").attr("href", "http://codh.rois.ac.jp/software/iiif-curation-viewer/demo/?curation="+curation_uri)
-
-            const curation = getJson(curation_uri)
-
-            if (curation.label) {
-              $('#label').text(curation.label)
-            }
-
-            const ids = arg.member
-
-            const selections = curation.selections
-
-            const map = {}
-
-            const sizes = {
-              all: 0,
-              annos: 0
-            }
-
-            const manifests = {}
-
-            selections.map(selection => {
-              const members = selection.members
-
-              const manifest = selection.within['@id']
-
-              members.map(member => {
-                const metadata = member.metadata
-
-                sizes.all += 1
-
-                
-
-                let flg = search(member, arg)//true
-
-                
-
-                if (flg) {
-                  sizes.annos += 1
-
-                  if (!manifests[manifest]) {
-                    manifests[manifest] = getJson(manifest)
-                  }
-
-                  const canvas_id = member['@id'].split('#')[0]
-
-                  const mdata = manifests[manifest]
-                  const canvases = mdata.sequences[0].canvases
-
-                  let image = ''
-                  let label = ''
-                  let width = -1
-                  let height = -1
-                  canvases.map((canvas, i) => {
-                    if (canvas['@id'] == canvas_id) {
-                      image = canvas.images[0].resource.service['@id']
-                      label = mdata.label + ' p.' + (i + 1)
-                      width = canvas.width
-                      height = canvas.height
-                      return
-                    }
-                  })
-
-                  if (!map[canvas_id]) {
-                    map[canvas_id] = {
-                      label,
-                      annos: [],
-                      image
-                    }
-                  }
-
-                  let bodyValue = member.label
-
-                  for (let j = 0; j < metadata.length; j++) {
-                    const m = metadata[j]
-                    const f = m.label
-                    const v = m.value
-
-                    // アノテーションの場合
-                    if (
-                      f === 'Annotation' &&
-                      Array.isArray(v) &&
-                      v[0]['@type'] === 'oa:Annotation'
-                    ) {
-                      // マーカー
-                      bodyValue = "<div>"+v[0].resource.chars+"</div>"
-                      break
-                    }
-                  }
-
-                  const bodyValueStr = jQuery('<div>' + bodyValue.split("<br/>").join(" ") + '</div>').text()
-
-                  if (member.related) {
-                    bodyValue =
-                      "<a target='app' href='" +
-                      member.related +
-                      "'>" +
-                      bodyValueStr +
-                      '</a>'
-                  }
-
-                  const body = [
-                    {
-                      type: 'TextualBody',
-                      value: bodyValue,
-                      format: 'text/html'
-                    }
-                  ]
-
-                  if(metadata){
-
-                    metadata.map(m => {
-                      if (Array.isArray(m.value) && typeof m.value[0] != 'string') {
-                        return
-                      }
-                      body.push({
-                        type: 'TextualBody',
-                        purpose: 'tagging',
-                        value:
-                          m.label +
-                          ': ' +
-                          (Array.isArray(m.value) ? m.value.join(', ') : m.value)
-                      })
-                    })
-                  }
-
-                  map[canvas_id].annos.push({
-                    '@context': 'http://www.w3.org/ns/anno.jsonld',
-                    id: member['@id'],
-                    label: bodyValueStr,
-                    type: 'Annotation',
-                    body,
-                    target: {
-                      selector: {
-                        type: 'FragmentSelector',
-                        conformsTo: 'http://www.w3.org/TR/media-frags/',
-                        value: member['@id'].split('#').length > 1 ? member['@id'].split('#')[1] : "0,0,"+width+","+height
-                      }
-                    }
-                  })
-                }
-              })
             })
+          })
+        }
+        return metadataObj
+      }
 
-            let canvas = arg.canvas ? arg.canvas[0].replace('/info.json', '') : ''
-
-            window.onload = function() {
-              if (Object.keys(map).length == 0) {
-                $('#openseadragon').append(
-                  "<p class='py-5 text-center'>表示する画像はありません。</p>"
-                )
+      function search(member, arg) {
+        const metadata = member.metadata
+        const metadataObj = convertMetadataArray2Map(metadata)
+        let flg = true
+        for (let key in arg) {
+          const values = arg[key]
+          if (key == 'curation') {
+            continue
+          } else if (key == 'q') {
+            values.map((value) => {
+              if (member.label.toLowerCase().includes(value.toLowerCase())) {
                 return
               }
-
-              $('#all').append(sizes.all.toLocaleString())
-              $('#annos').append(sizes.annos.toLocaleString())
-              $('#images').append(Object.keys(map).length.toLocaleString())
-
-              if (canvas == '') {
-                canvas = Object.keys(map)[0]
+              let flg2 = false
+              for (let f in metadataObj) {
+                metadataObj[f].map((v) => {
+                  if (String(v).toLowerCase().includes(value.toLowerCase())) {
+                    flg2 = true
+                    return
+                  }
+                })
+              }
+              if (!flg2) {
+                flg = false
+              }
+            })
+          } else if (key.includes('q-')) {
+            const field = key.replace('q-', '')
+            values.map((value) => {
+              let flg2 = false
+              if (!metadataObj[field]) {
+                flg = false
+                return
+              } else {
+                metadataObj[field].map((v) => {
+                  if (String(v).toLowerCase().includes(value.toLowerCase())) {
+                    flg2 = true
+                    return
+                  }
+                })
               }
 
-              for (let canvas2 in map) {
-                const obj = map[canvas2]
-                const uri = obj.image + '/info.json'
+              if (!flg2) {
+                flg = false
+              }
+            })
+          } else if (key.includes('fc-')) {
+            const field = key.replace('fc-', '')
+            values.map((value) => {
+              let flg2 = false
+              if (!metadataObj[field]) {
+                flg = false
+                return
+              } else {
+                metadataObj[field].map((v) => {
+                  if (String(v).toLowerCase() == value.toLowerCase()) {
+                    flg2 = true
+                    return
+                  }
+                })
+              }
 
-                // <!-- LIST -->
+              if (!flg2) {
+                flg = false
+              }
+            })
+          }
+        }
 
-                let li = $('<li></li>')
-                li.attr('class', 'list-group-item')
-                $('#list').append(li)
+        return flg
+      }
 
-                const text =
-                  obj.label +
-                  '（' +
-                  obj.annos.length.toLocaleString() +
-                  '）'
+      $('#left').css('max-height', $(window).height() * 0.9 + 'px')
+      $('#openseadragon').css('height', $(window).height() * 0.9 + 'px')
 
-                if (canvas != canvas2) {
-                  let a = $('<a></a>')
-                  li.append(a)
+      var arg = getParams()
 
-                  const newArg = JSON.parse(JSON.stringify(arg))
-                  //newArg.image = uri
-                  newArg.canvas = canvas2
+      if (arg.q) {
+        $('#keyword').val(arg.q)
+      }
 
-                  let url = convertObj2Str(newArg)
+      const curation_uri = arg.curation[0]
 
-                  a.attr('href', url)
-                  a.append(text)
-                } else {
-                  li.append(text)
-                  li.append(' <span class="badge badge-secondary">選択中</span>')
+      $('#icv').attr(
+        'href',
+        'http://codh.rois.ac.jp/software/iiif-curation-viewer/demo/?curation=' +
+          curation_uri
+      )
 
-                  // <!/-- LIST -->
+      const curation = getJson(curation_uri)
 
-                  const tileSources = getJson(uri)
-                  var viewer = OpenSeadragon({
-                    id: 'openseadragon',
-                    prefixUrl: 'https://recogito.github.io/js/openseadragon/images/',
-                    tileSources
-                  })
+      if (curation.label) {
+        $('#label').text(curation.label)
+      }
 
-                  var anno = OpenSeadragon.Annotorious(viewer, {
-                    readOnly: true,
-                    locale: 'auto',
-                    widgets: [HelloWorldPlugin]
-                  })
+      const ids = arg.member
 
-                  const arr = obj.annos
+      const selections = curation.selections
 
-                  for (let i = 0; i < arr.length; i++) {
-                    const data = arr[i]
+      const map = {}
 
-                    anno.addAnnotation(data)
+      const sizes = {
+        all: 0,
+        annos: 0,
+      }
 
-                    let a = $('<a></a>')
-                    $('#labels').append(a)
-                    a.append(data.label)
-                    a.attr('href', '#')
-                    a.on('click', function() {
-                      var xywh = data.id.split('=')[1].split(',')
+      const manifests = {}
 
-                      const b = viewer.viewport._contentBounds
+      selections.map((selection) => {
+        const members = selection.members
 
-                      const x = (parseInt(xywh[0]) / tileSources.width) * b.width
-                      const w = (parseInt(xywh[2]) / tileSources.width) * b.width
-                      const y = (parseInt(xywh[1]) / tileSources.height) * b.height
-                      const h = (parseInt(xywh[3]) / tileSources.height) * b.height
+        const manifest = selection.within['@id']
 
-                      var box1 = new OpenSeadragon.Rect(x, y, w, h)
-                      viewer.viewport.fitBoundsWithConstraints(box1)
+        members.map((member) => {
+          const metadata = member.metadata
 
-                      return false
-                    })
+          sizes.all += 1
 
+          let flg = search(member, arg) //true
+
+          if (flg) {
+            sizes.annos += 1
+
+            if (!manifests[manifest]) {
+              manifests[manifest] = getJson(manifest)
+            }
+
+            const canvas_id = member['@id'].split('#')[0]
+
+            const mdata = manifests[manifest]
+            const canvases = mdata.sequences[0].canvases
+
+            let image = ''
+            let label = ''
+            let width = -1
+            let height = -1
+            canvases.map((canvas, i) => {
+              if (canvas['@id'] == canvas_id) {
+                image = canvas.images[0].resource.service['@id']
+                label = mdata.label + ' p.' + (i + 1)
+                width = canvas.width
+                height = canvas.height
+                return
+              }
+            })
+
+            if (!map[canvas_id]) {
+              map[canvas_id] = {
+                label,
+                annos: [],
+                image,
+              }
+            }
+
+            let bodyValue = member.label
+
+            for (let j = 0; j < metadata.length; j++) {
+              const m = metadata[j]
+              const f = m.label
+              const v = m.value
+
+              // アノテーションの場合
+              if (
+                f === 'Annotation' &&
+                Array.isArray(v) &&
+                v[0]['@type'] === 'oa:Annotation'
+              ) {
+                // マーカー
+                bodyValue = '<div>' + v[0].resource.chars + '</div>'
+                break
+              }
+            }
+
+            const bodyValueStr = jQuery(
+              '<div>' + bodyValue.split('<br/>').join(' ') + '</div>'
+            ).text()
+
+            if (member.related) {
+              bodyValue =
+                "<a target='app' href='" +
+                member.related +
+                "'>" +
+                bodyValueStr +
+                '</a>'
+            }
+
+            const body = [
+              {
+                type: 'TextualBody',
+                value: bodyValue,
+                format: 'text/html',
+              },
+            ]
+
+            if (metadata) {
+              metadata.map((m) => {
+                if (Array.isArray(m.value) && typeof m.value[0] != 'string') {
+                  return
+                }
+                body.push({
+                  type: 'TextualBody',
+                  purpose: 'tagging',
+                  value:
+                    m.label +
+                    ': ' +
+                    (Array.isArray(m.value) ? m.value.join(', ') : m.value),
+                })
+              })
+            }
+
+            map[canvas_id].annos.push({
+              '@context': 'http://www.w3.org/ns/anno.jsonld',
+              id: member['@id'],
+              label: bodyValueStr,
+              type: 'Annotation',
+              body,
+              target: {
+                selector: {
+                  type: 'FragmentSelector',
+                  conformsTo: 'http://www.w3.org/TR/media-frags/',
+                  value:
+                    member['@id'].split('#').length > 1
+                      ? member['@id'].split('#')[1]
+                      : '0,0,' + width + ',' + height,
+                },
+              },
+            })
+          }
+        })
+      })
+
+      let canvas = arg.canvas ? arg.canvas[0].replace('/info.json', '') : ''
+
+      window.onload = function () {
+        if (Object.keys(map).length == 0) {
+          $('#openseadragon').append(
+            "<p class='py-5 text-center'>表示する画像はありません。</p>"
+          )
+          return
+        }
+
+        $('#all').append(sizes.all.toLocaleString())
+        $('#annos').append(sizes.annos.toLocaleString())
+        $('#images').append(Object.keys(map).length.toLocaleString())
+
+        if (canvas == '') {
+          canvas = Object.keys(map)[0]
+        }
+
+        for (let canvas2 in map) {
+          const obj = map[canvas2]
+          const uri = obj.image + '/info.json'
+
+          // <!-- LIST -->
+
+          let li = $('<li></li>')
+          li.attr('class', 'list-group-item')
+          $('#list').append(li)
+
+          const text =
+            obj.label + '（' + obj.annos.length.toLocaleString() + '）'
+
+          if (canvas != canvas2) {
+            let a = $('<a></a>')
+            li.append(a)
+
+            const newArg = JSON.parse(JSON.stringify(arg))
+            //newArg.image = uri
+            newArg.canvas = canvas2
+
+            let url = convertObj2Str(newArg)
+
+            a.attr('href', url)
+            a.append(text)
+          } else {
+            li.append(text)
+            li.append(' <span class="badge badge-secondary">選択中</span>')
+
+            // <!/-- LIST -->
+
+            const tileSources = getJson(uri)
+            var viewer = OpenSeadragon({
+              id: 'openseadragon',
+              prefixUrl: 'https://recogito.github.io/js/openseadragon/images/',
+              tileSources,
+            })
+
+            var anno = OpenSeadragon.Annotorious(viewer, {
+              readOnly: true,
+              locale: 'auto',
+              widgets: [HelloWorldPlugin],
+            })
+
+            const arr = obj.annos
+
+            //let div = ""
+            let row = '' // $(`<div class="row"></div>`)
+            //$('#labels').append(row)
+
+            let colSize = 2
+
+            for (let i = 0; i < arr.length; i++) {
+              if (i % (12 / colSize) == 0) {
+                row = $(`<div class="row"></div>`) //append(div)
+                $('#labels').append(row)
+              }
+
+              const data = arr[i]
+
+              anno.addAnnotation(data)
+
+              const col = $(`<div class="col-md-${colSize} mb-4"></div>`)
+              row.append(col)
+
+              let a = $('<a></a>')
+              col.append(a)
+              a.append(data.label)
+              a.attr('href', '#')
+              a.on('click', function () {
+                var xywh = data.id.split('=')[1].split(',')
+
+                const b = viewer.viewport._contentBounds
+
+                const x = (parseInt(xywh[0]) / tileSources.width) * b.width
+                const w = (parseInt(xywh[2]) / tileSources.width) * b.width
+                const y = (parseInt(xywh[1]) / tileSources.height) * b.height
+                const h = (parseInt(xywh[3]) / tileSources.height) * b.height
+
+                var box1 = new OpenSeadragon.Rect(x, y, w, h)
+                viewer.viewport.fitBoundsWithConstraints(box1)
+
+                return false
+              })
+
+              /*
                     if(i != arr.length - 1){
                       let span = $('<span></span>')
                       $('#labels').append(span)
                       span.attr("class", "mx-2")
                       span.append("/")
                     }
-                  }
-
-                  $('#target').append(obj.annos.length.toLocaleString())
-                }
-              }
+                    */
             }
 
-            // <!-- functions -->
+            $('#target').append(obj.annos.length.toLocaleString())
+          }
+        }
+      }
 
-            function getJson(url) {
-              let tmpUrl = url
-              if(url.includes("http://")){
-                tmpUrl = "https://diyhistory.org/c.php/"+url
-                //tmpUrl = "https://njs.glitch.me/?u="+url
-              }
-              var result = $.ajax({
-                type: 'GET',
-                url: tmpUrl,
-                async: false,
-                dataType: 'json'
-              }).responseJSON
-              return result
-            }
+      // <!-- functions -->
 
-            function getParams() {
-              var arg = new Object()
-              url = location.search.substring(1).split('&')
+      function getJson(url) {
+        let tmpUrl = url
+        if (url.includes('http://')) {
+          tmpUrl = 'https://diyhistory.org/c.php/' + url
+          //tmpUrl = "https://njs.glitch.me/?u="+url
+        }
+        var result = $.ajax({
+          type: 'GET',
+          url: tmpUrl,
+          async: false,
+          dataType: 'json',
+        }).responseJSON
+        return result
+      }
 
-              for (i = 0; url[i]; i++) {
-                var k = url[i].split('=')
-                const label = decodeURIComponent(k[0])
-                const value = decodeURIComponent(k[1])
+      function getParams() {
+        var arg = new Object()
+        url = location.search.substring(1).split('&')
 
-                if (!arg[label]) {
-                  arg[label] = []
-                }
-                arg[label].push(value)
-              }
+        for (i = 0; url[i]; i++) {
+          var k = url[i].split('=')
+          const label = decodeURIComponent(k[0])
+          const value = decodeURIComponent(k[1])
 
-              return arg
-            }
+          if (!arg[label]) {
+            arg[label] = []
+          }
+          arg[label].push(value)
+        }
 
-            function typeOf(obj) {
-              return toString
-                .call(obj)
-                .slice(8, -1)
-                .toLowerCase()
-            }
+        return arg
+      }
 
-            function convertObj2Str(obj) {
-              let url = ''
-              for (let key in obj) {
-                let values = obj[key]
-                values = Array.isArray(values) ? values : [values]
-                values.map(v => {
-                  url += '&' + key + '=' + decodeURIComponent(v)
-                })
-              }
-              return '?' + url.substring(1)
-            }
+      function typeOf(obj) {
+        return toString.call(obj).slice(8, -1).toLowerCase()
+      }
 
-            $('form').submit(function() {
-              arg.q = $('#keyword').val()
-              location.href = convertObj2Str(arg)
-              return false
-            })
+      function convertObj2Str(obj) {
+        let url = ''
+        for (let key in obj) {
+          let values = obj[key]
+          values = Array.isArray(values) ? values : [values]
+          values.map((v) => {
+            url += '&' + key + '=' + decodeURIComponent(v)
+          })
+        }
+        return '?' + url.substring(1)
+      }
+
+      $('form').submit(function () {
+        arg.q = $('#keyword').val()
+        location.href = convertObj2Str(arg)
+        return false
+      })
     </script>
   </body>
 </html>
