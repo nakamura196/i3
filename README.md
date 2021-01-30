@@ -26,6 +26,14 @@ ex. [江戸マップ・御江戸大名小路絵図（CODH編集）](https://purl
 
 * 2021-01-13
   * マーカー形式のIIIFキュレーションリストの表示方式を更新
+
+## IIIF Curation Comparison
+
+IIIFキュレーションリストを引数として、Mirador 2で画像を比較する機能を提供します。
+
+https://purl.org/dhn/i3/compare/
+
+ex. [百鬼夜行図](https://purl.org/dhn/i3/compare/?curation=https://purl.org/dhn/i3/compare/data.json&layout=2x2)
   
 ## Infinite Loading for IIIF Collection
 
