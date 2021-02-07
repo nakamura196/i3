@@ -26,6 +26,10 @@ ex. [江戸マップ・御江戸大名小路絵図（CODH編集）](https://purl
 
 * 2021-01-13
   * マーカー形式のIIIFキュレーションリストの表示方式を更新
+  
+| パラメータ名 | 内容 | 値の形式 | 補足 |
+| ------------- | ------------- | ------------- | ------------- |
+| curation | Curation APIに準拠するJSONファイルのURLによる表示対象指定 | URL | 必須
 
 ## IIIF Curation Comparison
 
@@ -34,12 +38,21 @@ IIIFキュレーションリストを引数として、Mirador 2で画像を比�
 https://purl.org/dhn/i3/compare/
 
 ex. [百鬼夜行図](https://purl.org/dhn/i3/compare/?curation=https://purl.org/dhn/i3/compare/data.json&layout=2x2)
+
+| パラメータ名 | 内容 | 値の形式 | 補足 |
+| ------------- | ------------- | ------------- | ------------- |
+| curation | Curation APIに準拠するJSONファイルのURLによる表示対象指定 | URL | 必須
+| layout  | Miradorのウインドウズの分割レイアウト | [0-9]+x[0-9]+ | 任意
   
 ## Infinite Loading for IIIF Collection
 
 https://purl.org/dhn/i3/collection/
 
 ex. [捃拾帖](https://purl.org/dhn/i3/collection/?u=https://archdataset.dl.itc.u-tokyo.ac.jp/collections/tanaka/image/collection.json&random=true)
+
+| パラメータ名 | 内容 | 値の形式 | 補足 |
+| ------------- | ------------- | ------------- | ------------- |
+| u | IIIF Presenation APIに準拠するIIIFコレクションのJSONファイルのURL | URL | 必須
   
 ## IIIF Annotation Library
 
