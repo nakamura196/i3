@@ -447,7 +447,7 @@
         const manifest = selection.within['@id']
 
         members.map((member) => {
-          const metadata = member.metadata
+          const metadata = member.metadata || []
 
           sizes.all += 1
 
