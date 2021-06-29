@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/conv", {data:[{}],fetch:[],mutations:void 0});
