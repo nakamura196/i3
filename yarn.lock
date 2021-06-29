@@ -11312,10 +11312,10 @@
   "resolved" "https://registry.npmjs.org/vue-tweet-embed/-/vue-tweet-embed-2.4.0.tgz"
   "version" "2.4.0"
 
-"vue@*", "vue@^2.0.0", "vue@^2.2.0", "vue@^2.5.0", "vue@^2.6.10", "vue@^2.6.12", "vue@^2.6.4", "vue@>=2":
-  "integrity" "sha512-uhmLFETqPPNyuLLbsKz6ioJ4q7AZHzD8ZVFNATNyICSZouqP2Sz0rotWQC8UNBF6VGSCs5abnKJoStA6JbCbfg=="
-  "resolved" "https://registry.npmjs.org/vue/-/vue-2.6.12.tgz"
-  "version" "2.6.12"
+"vue@*", "vue@^2.0.0", "vue@^2.2.0", "vue@^2.5.0", "vue@^2.6.10", "vue@^2.6.12", "vue@^2.6.14", "vue@^2.6.4", "vue@>=2":
+  "integrity" "sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ=="
+  "resolved" "https://registry.npmjs.org/vue/-/vue-2.6.14.tgz"
+  "version" "2.6.14"
 
 "vuetify-loader@^1.7.2":
   "integrity" "sha512-2GSo4KvRAOThBsj8mvtIEeIoyBAZx38GDfh8D90e/or7Hzx4813krJKvcQAllyLO/Ln0eQWrq2IuvBXnZ55cSA=="
