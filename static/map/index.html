@@ -56,15 +56,7 @@
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
           <a class="navbar-brand">IIIF Curation Content Search</a>
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
 
@@ -75,6 +67,13 @@
                   詳細
                 </button>
               </li>
+              <!--
+              <li class="nav-item active">
+                <button type="button" class="btn btn-outline-light m-1" data-toggle="modal" data-target="#helpModal">
+                  ヘルプ
+                </button>
+              </li>
+              -->
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   リンク
@@ -281,99 +280,28 @@
     </div>
 
     <!-- Modal -->
-    <div
-      class="modal fade"
-      id="exampleModal"
-      tabindex="-1"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
+    <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">
-              <i class="fas fa-info-circle"></i> 詳細
+              <i class="fas fa-question-circle"></i> ヘルプ
             </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
           <div class="modal-body">
-            <div class="row my-4">
-              <div class="col-lg-12">
-                <div class="card mb-4">
-                  <div class="card-header">対象画像（カンバス）</div>
-                  <ul class="list-group list-group-flush" id="list"></ul>
-                </div>
-              </div>
-
-              <!--
-              <div class="col-lg-6 mb-4">
-                <div class="card">
-                  <div class="card-header">キーワード検索</div>
-                  <div class="card-body">
-                    <form>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="keyword"
-                        placeholder="検索語を入力してください。"
-                      />
-                      <button type="submit" class="btn btn-primary mt-3">
-                        検索
-                      </button>
-                    </form>
-                    <div class="mt-3" id="labels"></div>
-                  </div>
-                </div>
-              </div>
-              -->
-
-              <div class="col-lg-12">
-                <div class="card">
-                  <div class="card-header">アノテーション</div>
-                  <div class="card-body">
-                    <table class="table table-bordered">
-                      <tbody>
-                        <tr>
-                          <th width="60%">総アノテーション数</th>
-                          <td id="all"></td>
-                        </tr>
-
-                        <tr>
-                          <th>検索条件に合致したアノテーション数</th>
-                          <td id="annos"></td>
-                        </tr>
-
-                        <tr>
-                          <th>検索条件に合致した画像（カンバス）数</th>
-                          <td id="images"></td>
-                        </tr>
-
-                        <tr>
-                          <th>
-                            当該画像（カンバス）に含まれるアノテーション数
-                          </th>
-                          <td id="target"></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ul>
+              <li>curation: (必須)Curation APIに準拠するJSONファイルのURL</li>
+              <li>q: 任意のmetadataのvalueに対して、部分一致検索を行います。</li>
+              <li>q-XXX: metadataのlabel:XXXに対して、部分一致検索を行います。</li>
+              <li>fc-XXX: metadataのlabel:XXXに対して、完全一致検索を行います。</li>
+              <li>label: 一覧に表示するlabelを指定します。カンマ区切りで複数指定します。</li>
+            </ul>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
