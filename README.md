@@ -16,7 +16,7 @@ https://purl.org/dhn/i3/conv
     * IIIFコレクションの場合、各マニフェストの第1カンバスの情報のみから構成されるIIIFキュレーションリストに変換します。
   * マーカー形式のIIIFキュレーションリストの変換方式を更新
 
-## IIIF Curation Map Search
+## IIIF Curation Content Search
 
 IIIFキュレーションリストに対して、IIIF Content Search APIライクな機能を提供します。
 
@@ -24,12 +24,19 @@ https://purl.org/dhn/i3/map/
 
 ex. [江戸マップ・御江戸大名小路絵図（CODH編集）](https://purl.org/dhn/i3/map/?curation=http://codh.rois.ac.jp/edo-maps/owariya/01/1849/ndl.json)
 
+* 2021-06
+  * クエリパラメータを追加
+  * ユーザインタフェースを更新
 * 2021-01-13
   * マーカー形式のIIIFキュレーションリストの表示方式を更新
   
 | パラメータ名 | 内容 | 値の形式 | 補足 |
 | ------------- | ------------- | ------------- | ------------- |
 | curation | Curation APIに準拠するJSONファイルのURLによる表示対象指定 | URL | 必須
+| q | 任意のmetadataのvalueに対して、部分一致検索を行います。 | string | 任意
+| q-XXX | metadataのlabel:XXXに対して、部分一致検索を行います。 | string | 任意
+| fc-XXX | metadataのlabel:XXXに対して、完全一致検索を行います。 | string | 任意
+| label | 一覧に表示するlabelを指定します。カンマ区切りで複数指定します。 | string | 任意
 
 ## IIIF Curation Comparison
 
