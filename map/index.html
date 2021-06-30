@@ -55,7 +55,7 @@
     <div>
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="navbar" style="display: none;">
         <div class="container-fluid">
-          <a class="navbar-brand">IIIF Curation Content Search</a>
+          <a class="navbar-brand" id="label">IIIF Curation Content Search</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -381,32 +381,128 @@
         return metadataObj
       }
 
-      function search(member, arg) {
+      const makeComb = function(...array) {
+        const make = (arr1, arr2) => {
+            if (arr1.length === 0) {
+              return arr2;
+            }
+            return arr1.reduce((arr, v1) => {
+              arr2.forEach(v2 => {
+                const group = [].concat(v1, v2);
+                arr.push(group);
+              });
+              return arr;
+            }, []);
+          };
+
+        return array.reduce(make, []);
+      };
+
+
+      function getItaiji(data){
+        $.ajaxSetup({ async: false });
+
+        var dict= (function() {
+            var result;
+            $.ajax({
+                type:'GET',
+                url:'assets/dict.json',
+                dataType:'json',
+                async:false,
+                success:function(data){
+                    result = data;
+                }
+            });
+            return result;
+        })();
+
+        const arr = []
+        for(const c of data.split("")){
+          let v2 = dict[c] ? [c].concat(dict[c]) : [c]
+          arr.push(v2)
+        }
+
+        if(arr.length == 1){
+          return arr[0]
+        } else {
+          const arr2 = makeComb(...arr)
+
+          const values = []
+          arr2.forEach(s => {
+            values.push(s.join(''))
+          });
+
+          return values
+        }
+
+        
+      }
+
+      function check(value, member){
         const metadata = member.metadata
         const metadataObj = convertMetadataArray2Map(metadata)
+
+        if (member.label.toLowerCase().includes(value.toLowerCase())) {
+          return true
+        }
+        let flg2 = false
+
+        
+        for (let f in metadataObj) {
+          for(const v of metadataObj[f]){
+            if (String(v).toLowerCase().includes(value.toLowerCase())) {
+              return true
+            }
+          }
+        }
+        return false
+      }
+
+      function search(member, arg) {
+        
         let flg = true
         for (let key in arg) {
           const values = arg[key]
-          if (key == 'curation') {
+          if (['curation', 'itaiji'].includes(key)) {
             continue
           } else if (key == 'q') {
-            values.map((value) => {
-              if (member.label.toLowerCase().includes(value.toLowerCase())) {
-                return
-              }
-              let flg2 = false
-              for (let f in metadataObj) {
-                metadataObj[f].map((v) => {
-                  if (String(v).toLowerCase().includes(value.toLowerCase())) {
-                    flg2 = true
-                    return
+            if(values[0] === ""){
+              continue
+            }
+            //全文検索
+            //カンマ区切りの場合
+            let andFlg = true
+            for(let i = 0; i < values.length; i++){
+              const value = values[i]
+
+              if(arg.itaiji){
+                const values2 = arg.itaiji[i]
+                
+                let orFlg = false
+                for(const value2 of values2){
+                  if(check(value2, member)){
+                    orFlg = true
+                    break
                   }
-                })
+                }
+                //flg = flg2
+                if(!orFlg){
+                  andFlg = false
+                  //break
+                }
+                //andFlg = orFlg
+              } else {
+                //flg = check(value, member)
+                if(!check(value, member)){
+                  andFlg = false
+                }
+                //andFlg = check(value, member)
               }
-              if (!flg2) {
-                flg = false
-              }
-            })
+            }
+            if(!andFlg){
+              flg = false
+            }
+            
           } else if (key.includes('q-')) {
             const field = key.replace('q-', '')
             values.map((value) => {
@@ -465,7 +561,7 @@
       }
 
       if (arg.q) {
-        $('#keyword').val(arg.q)
+        $('#keyword').val(arg.q.join(" "))
       }
 
       if (arg.label) {
@@ -789,6 +885,9 @@
       }
 
       function getParams() {
+        //異体字検索を有効化
+        const isItaiji = true
+
         var arg = new Object()
         url = location.search.substring(1).split('&')
 
@@ -798,9 +897,23 @@
           const value = decodeURIComponent(k[1])
 
           if (!arg[label]) {
-            arg[label] = []
+            arg[label] = [] 
           }
-          arg[label].push(value)
+          if(label === "q"){
+            //全文検索の場合、スペースは分割
+            const values = value.split("　").join(" ").split(" ")
+
+            arg.itaiji = Array(values.length)
+            for(let i = 0; i < values.length; i++){
+              const v = values[i]
+              arg[label].push(v)
+              if(isItaiji){
+                arg.itaiji[i] = getItaiji(v)
+              }
+            }
+          } else {
+            arg[label].push(value)
+          } 
         }
 
         return arg
@@ -824,6 +937,7 @@
 
       $('form').submit(function () {
         arg.q = $('#keyword').val()
+        delete arg.itaiji
         location.href = convertObj2Str(arg)
         return false
       })
