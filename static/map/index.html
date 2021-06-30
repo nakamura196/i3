@@ -418,7 +418,7 @@
 
         const arr = []
         for(const c of data.split("")){
-          let v2 = [c].concat(dict[c])
+          let v2 = dict[c] ? [c].concat(dict[c]) : [c]
           arr.push(v2)
         }
 
@@ -471,24 +471,38 @@
             }
             //全文検索
             //カンマ区切りの場合
+            let andFlg = true
             for(let i = 0; i < values.length; i++){
               const value = values[i]
 
               if(arg.itaiji){
                 const values2 = arg.itaiji[i]
                 
-                let flg2 = false
+                let orFlg = false
                 for(const value2 of values2){
                   if(check(value2, member)){
-                    flg2 = true
+                    orFlg = true
                     break
                   }
                 }
-                flg = flg2
+                //flg = flg2
+                if(!orFlg){
+                  andFlg = false
+                  //break
+                }
+                //andFlg = orFlg
               } else {
-                flg = check(value, member)
+                //flg = check(value, member)
+                if(!check(value, member)){
+                  andFlg = false
+                }
+                //andFlg = check(value, member)
               }
             }
+            if(!andFlg){
+              flg = false
+            }
+            
           } else if (key.includes('q-')) {
             const field = key.replace('q-', '')
             values.map((value) => {
