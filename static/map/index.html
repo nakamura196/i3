@@ -596,7 +596,7 @@
         'href',
         'http://codh.rois.ac.jp/software/iiif-curation-viewer/demo/?curation=' +
           curation_uri
-      )
+      ).attr("target", "_parent")
 
       const curation = getJson(curation_uri)
 
