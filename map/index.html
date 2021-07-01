@@ -160,44 +160,56 @@
           -->
         </div>
       </nav>
-
+      
+      <!--
       <div class="d-flex justify-content-center my-5 py-5" id="loading">
         <div class="spinner-border text-primary" role="status">
           <span class="sr-only">Loading...</span>
         </div>
       </div>
-
-      
+      -->      
 
       <!-- background-color: #f8f9fa; -->
-      <div class="container-fluid my-3" id="main" style="display: none;">
+      <div class="container-fluid my-3">
         <div class="row">
-          <div class="col-lg-5">
-            <div
-              class="p-4"
-              style="height: 100%; overflow-y: auto"
-              id="left"
-            >
-              <table class="table table-stripe" id="lingTable">
-                <thead>
-                  <tr id="thead">
-                    <th>ラベル</th>
-                  </tr>
-                </thead>
-                <tbody id="tbody"></tbody>
-              </table>
+          <div class="col-md-5">
+            <div id="progress" class="p-5">
+              <div class="progress">
+                <div class="progress-bar" id="bar" role="progressbar" style="width: 25%;" 
+                aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+              <p class="m-5" id="text">1/3：画像をダウンロードしています。</p>
+            </div>
+            <div id="main" style="display: none;">
+              <div
+                class="p-4"
+                style="height: 800px; overflow-y: auto"
+                id="left"
+              >
+              <!-- height: 100%;  -->
+                <table class="table table-stripe" id="lingTable">
+                  <thead>
+                    <tr id="thead">
+                      <th>ラベル</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody"></tbody>
+                </table>
 
-              <!-- <div id="labels" class="mb-4"></div> -->
+                <!-- <div id="labels" class="mb-4"></div> -->
+              </div>
             </div>
           </div>
-          <div class="col-lg-7">
-            <div id="openseadragon" style="width: 100%; height: 100%"></div>
+          <div class="col-md-7">
+            <div id="openseadragon" style="height: 800px; width: 100%;"></div> <!--  height: 90% -->
           </div>
         </div>
       </div>
 
       <div class="container my-5" style="display: none"></div>
     </div>
+
+    
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -339,7 +351,7 @@
       src="https://recogito.github.io/js/openseadragon/openseadragon.2.4.2.min.js"
     ></script>
     <script src="hello-world-plugin.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious-openseadragon@2.1.1/dist/openseadragon-annotorious.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious-openseadragon@2.4.1/dist/openseadragon-annotorious.min.js"></script>
     
 
     <script
@@ -555,8 +567,8 @@
         return flg
       }
 
-      $('#left').css('max-height', $(window).height() * 0.9 + 'px')
-      $('#openseadragon').css('height', $(window).height() * 0.9 + 'px')
+      //$('#left').css('height', $(window).height() * 0.9 + 'px')
+      //$('#openseadragon').css('height', $(window).height() * 0.8 + 'px')
 
       var arg = getParams()
 
@@ -744,13 +756,21 @@
 
       let canvas = arg.canvas ? arg.canvas[0].replace('/info.json', '') : ''
 
+      let viewer;
+      let tileSources;
+      let arr;
+
       window.onload = function () {
+        
         if (Object.keys(map).length == 0) {
-          $('#openseadragon').append(
-            "<p class='py-5 text-center'>表示する画像はありません。</p>"
+
+          $("#progress").hide()
+
+          $("#progress").after(
+            "<p class='py-5 text-center'>検索結果は0件です。</p>"
           )
-          return
         }
+        
 
         $('#all').append(sizes.all.toLocaleString())
         $('#annos').append(sizes.annos.toLocaleString())
@@ -786,13 +806,16 @@
             a.attr('href', url)
             a.append(text)
           } else {
+            $('#target').append(obj.annos.length.toLocaleString())
+
             li.append(text)
             li.append(' <span class="badge badge-secondary">選択中</span>')
 
             // <!/-- LIST -->
 
-            const tileSources = getJson(uri)
-            var viewer = OpenSeadragon({
+            tileSources = getJson(uri)
+            //var 
+            viewer = OpenSeadragon({
               id: 'openseadragon',
               prefixUrl: 'https://recogito.github.io/js/openseadragon/images/',
               tileSources,
@@ -804,84 +827,124 @@
               widgets: [HelloWorldPlugin],
             })
 
-            const arr = obj.annos
+            arr = obj.annos
 
-            var tbody = $('#tbody')
 
-            for (let i = 0; i < arr.length; i++) {
+            $("#bar").attr("style", "width: 50%;")
+            $("#text").text(`2/3：${arr.length.toLocaleString()}件のアノテーションをセットしています。`)
 
-              if(i % 500 == 0){
-                console.log(i)
-              }
-
-              const data = arr[i]
+            sleep(0.0001, function () {
+ 
               
-              //ここがバージョンによっては遅くなる
-              anno.addAnnotation(data)
+              setAnnos(anno)
 
-              //
+              $("#bar").attr("style", "width: 75%;")
+              $("#text").text(`3/3：${arr.length.toLocaleString()}件のアイテム一覧を準備しています。`)
 
-              var tr = $('<tr>')
-              tbody.append(tr)
+              sleep(0.0001, function () {
 
-              var td = $('<td>')
-              tr.append(td)
+                setTable()
 
-              //
+                $("#progress").hide()
+                $("#main").show()
 
-              let a = $('<a></a>')
-              //col.append(a)
-              td.append(a)
-              a.append(data.label)
-              a.attr('href', '#')
-              a.on('click', function () {
-                var xywh = data.id.split('=')[1].split(',')
+              });
 
-                const b = viewer.viewport._contentBounds
-
-                const x = (parseInt(xywh[0]) / tileSources.width) * b.width
-                const w = (parseInt(xywh[2]) / tileSources.width) * b.width
-                const y = (parseInt(xywh[1]) / tileSources.height) * b.height
-                const h = (parseInt(xywh[3]) / tileSources.height) * b.height
-
-                var box1 = new OpenSeadragon.Rect(x, y, w, h)
-                viewer.viewport.fitBoundsWithConstraints(box1)
-
-                return false
-              })
-
-              for (const listLabel of listLabels) {
-                var td = $('<td>')
-                tr.append(td)
-                td.append(data.list[listLabel])
-              }
-            }
-
-            var height = jQuery(window).height()
-            //console.log({height})
-
-            const dtSetting = {
-              //scrollY: height * 0.6,
-              //"scrollCollapse": true,
-              destroy: true,
-              //data: lingData,
-              language: {
-                url:
-                  'https://cdn.datatables.net/plug-ins/3cfcc339e89/i18n/Japanese.json',
-              },
-              //"dom": '<"top"i>rt<"bottom"flp><"clear">'
-            }
-            $('#lingTable').DataTable(dtSetting)
-
-            $('#target').append(obj.annos.length.toLocaleString())
-
-            $("#loading").attr("style", "display: none !important;")
-            $("#main").attr("style", "display: block !important;")
+            });
+            
           }
         }
       }
 
-      // <!-- functions -->
+      function setAnnos(anno){
+        anno.setAnnotations(arr)
+      }
+
+      function setTable(){
+
+        var tbody = $('#tbody')
+
+        for(let i = 0; i < arr.length; i++){
+          
+          const data = arr[i]
+
+          var tr = $('<tr>')
+          tbody.append(tr)
+
+          var td = $('<td>')
+          tr.append(td)
+
+          //
+
+          let a = $('<a></a>')
+          //col.append(a)
+          td.append(a)
+          a.append(data.label)
+          a.attr('href', '#')
+
+
+          //a.on('click', )
+          a.on('click',function(){
+              zoom(`${i}`)
+          });
+
+          for (const listLabel of listLabels) {
+            var td = $('<td>')
+            tr.append(td)
+            //console.log(data)
+            td.append(data.list[listLabel])
+          }
+
+        }
+        
+        const dtSetting = {
+          scrollY: 500, //height * 0.6,
+          scrollCollapse: true,
+          destroy: true,
+          //data: lingData,
+          language: {
+            url:
+              'https://cdn.datatables.net/plug-ins/3cfcc339e89/i18n/Japanese.json',
+          },
+          //"dom": '<"top"i>rt<"bottom"flp><"clear">'
+        }
+      
+        $('#lingTable').DataTable(dtSetting)
+      }
+
+      function zoom(index){
+        const data = arr[index]
+        var xywh = data.id.split('=')[1].split(',')
+
+        const b = viewer.viewport._contentBounds
+
+        const x = (parseInt(xywh[0]) / tileSources.width) * b.width
+        const w = (parseInt(xywh[2]) / tileSources.width) * b.width
+        const y = (parseInt(xywh[1]) / tileSources.height) * b.height
+        const h = (parseInt(xywh[3]) / tileSources.height) * b.height
+
+        var box1 = new OpenSeadragon.Rect(x, y, w, h)
+        viewer.viewport.fitBoundsWithConstraints(box1)
+
+        return false
+      }
+
+      // setIntervalを使う方法
+      function sleep(waitSec, callbackFunc) {
+        // 経過時間（秒）
+        var spanedSec = 0;
+        // 1秒間隔で無名関数を実行
+        var id = setInterval(function () {
+            spanedSec++;
+            // 経過時間 >= 待機時間の場合、待機終了。
+            if (spanedSec >= waitSec) {
+                // タイマー停止
+                clearInterval(id);
+                // 完了時、コールバック関数を実行
+                if (callbackFunc) callbackFunc();
+            }
+        }, 1000);
+      }
 
       function getJson(url) {
         let tmpUrl = url
