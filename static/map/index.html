@@ -107,7 +107,7 @@
       </nav> 
 
 
-      <div class="container-fluid my-3">
+      <div class="container-fluid my-3" id="container">
         <div class="row">
           <div class="col-md-5">
             <div id="progress" class="p-5">
@@ -494,6 +494,11 @@
 
         let canvas = arg.canvas ? arg.canvas[0].replace('/info.json', '') : ''
 
+        //必須項目がない場合
+        if(!arg.curation){
+          return {}
+        }
+
         const curation_uri = arg.curation[0]
 
         $('#icv').attr(
@@ -503,6 +508,11 @@
         ).attr("target", "_parent")
 
         const curation = getJson(curation_uri)
+
+        //正しく取得できない場合
+        if(!curation){
+          return {}
+        }
 
         if (curation.label) {
           $('#label').text(curation.label)
@@ -585,11 +595,17 @@
                   break
                 }
               }
+              
+              // embeddedの場合は、_parent で開く
+              if (arg.embedded){
+                bodyValue = bodyValue.replace(" href", " target='_parent' href")
+              }
 
               const bodyValueStr = jQuery(
                 '<div>' + bodyValue + '</div>'
               ).html().replace("href", "#")
 
+              /*
               if (member.related) {
                 bodyValue =
                   "<a target='_parent' href='" +
@@ -598,6 +614,9 @@
                   bodyValueStr +
                   '</a>'
               }
+              */
+
+              console.log({bodyValue})
 
               const body = [
                 {
@@ -660,13 +679,27 @@
       window.onload = function () {
 
         let {map, sizes, canvas} = main()
+
+        if(!map){
+          $("#progress").hide()
+
+          $("#container").prepend(
+            `
+            <div class="p-5">
+            <div class="alert alert-warning" role="alert">
+              キュレーションリストが不正です。
+            </div>
+            </div>`
+          )
+          return
+        }
         
         if (Object.keys(map).length == 0) {
 
           $("#progress").hide()
 
-          $("#progress").after(
-            "<p class='py-5 text-center'>検索結果は0件です。</p>"
+          $("#container").prepend(
+            "<p class='p-5 text-center'>検索結果は0件です。</p>"
           )
         }
         
