@@ -472,9 +472,10 @@
       let arr;
       let listLabels = []
 
-      function main(){
+      //グローバル化
+      var arg = getParams()
 
-        var arg = getParams()
+      function main(){
 
         if (!arg.embedded){
           $("#navbar").show()
@@ -615,8 +616,6 @@
                   '</a>'
               }
               */
-
-              console.log({bodyValue})
 
               const body = [
                 {
