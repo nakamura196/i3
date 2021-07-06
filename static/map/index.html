@@ -377,6 +377,8 @@
 
         const metadata = member.metadata
         const metadataObj = convertMetadataArray2Map(metadata)
+
+        // console.log({arg})
         
         let flg = true
         for (let key in arg) {
@@ -442,25 +444,20 @@
               }
             })
           } else if (key.includes('fc-')) {
+            // OR検索
             const field = key.replace('fc-', '')
+            let flg2 = false
             values.map((value) => {
-              let flg2 = false
-              if (!metadataObj[field]) {
-                flg = false
-                return
-              } else {
-                metadataObj[field].map((v) => {
-                  if (String(v).toLowerCase() == value.toLowerCase()) {
-                    flg2 = true
-                    return
-                  }
-                })
-              }
-
-              if (!flg2) {
-                flg = false
-              }
+              metadataObj[field].map((v) => {
+                if (String(v).toLowerCase() == value.toLowerCase()) {
+                  flg2 = true
+                  return
+                }
+              })
             })
+            if (!flg2) {
+              flg = false
+            }
           }
         }
 
