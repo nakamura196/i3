@@ -395,7 +395,7 @@
             for(let i = 0; i < values.length; i++){
               const value = values[i]
 
-              if(arg.itaiji){
+              if(arg.itaiji && arg.itaiji[0]){
                 const values2 = arg.itaiji[i]
                 
                 let orFlg = false
@@ -472,53 +472,9 @@
       //グローバル化
       var arg = getParams()
 
-      function main(){
+      function loop(canvas, selections, arg){
 
-        if (!arg.embedded){
-          $("#navbar").show()
-        }
-
-        if (arg.q) {
-          $('#keyword').val(arg.q.join(" "))
-        }
-
-        if (arg.label) {
-          listLabels = arg.label[0].split(',')
-
-          for (const label of listLabels) {
-            $('#thead').append(jQuery(`<th>${label}</th>`))
-          }
-        }
-
-        let canvas = arg.canvas ? arg.canvas[0].replace('/info.json', '') : ''
-
-        //必須項目がない場合
-        if(!arg.curation){
-          return {}
-        }
-
-        const curation_uri = arg.curation[0]
-
-        $('#icv').attr(
-          'href',
-          'http://codh.rois.ac.jp/software/iiif-curation-viewer/demo/?curation=' +
-            curation_uri
-        ).attr("target", "_parent")
-
-        const curation = getJson(curation_uri)
-
-        //正しく取得できない場合
-        if(!curation){
-          return {}
-        }
-
-        if (curation.label) {
-          $('#label').text(curation.label)
-        }
-
-        const ids = arg.member
-
-        const selections = curation.selections
+        console.log("start search", arg.itaiji)
 
         const map = {}
 
@@ -669,7 +625,62 @@
           })
         })
 
+        console.log("end search")
+
         return {map, sizes, canvas}
+      }
+
+      function main(){
+
+        if (!arg.embedded){
+          $("#navbar").show()
+        }
+
+        if (arg.q) {
+          $('#keyword').val(arg.q.join(" "))
+        }
+
+        if (arg.label) {
+          listLabels = arg.label[0].split(',')
+
+          for (const label of listLabels) {
+            $('#thead').append(jQuery(`<th>${label}</th>`))
+          }
+        }
+
+        let canvas = arg.canvas ? arg.canvas[0].replace('/info.json', '') : ''
+
+        //必須項目がない場合
+        if(!arg.curation){
+          return {}
+        }
+
+        const curation_uri = arg.curation[0]
+
+        $('#icv').attr(
+          'href',
+          'http://codh.rois.ac.jp/software/iiif-curation-viewer/demo/?curation=' +
+            curation_uri
+        ).attr("target", "_parent")
+
+        const curation = getJson(curation_uri)
+
+        console.log("end download")
+
+        //正しく取得できない場合
+        if(!curation){
+          return {}
+        }
+
+        if (curation.label) {
+          $('#label').text(curation.label)
+        }
+
+        const ids = arg.member
+
+        const selections = curation.selections
+
+        return loop(canvas, selections, arg) 
       }
 
       window.onload = function () {
@@ -890,8 +901,7 @@
       }
 
       function getParams() {
-        //異体字検索を有効化
-        const isItaiji = true
+        
 
         var arg = new Object()
         url = location.search.substring(1).split('&')
@@ -904,6 +914,10 @@
           if (!arg[label]) {
             arg[label] = [] 
           }
+
+          arg[label].push(value)
+
+          /*
           if(label === "q"){
             //全文検索の場合、スペースは分割
             const values = value.split("　").join(" ").split(" ")
@@ -918,7 +932,30 @@
             }
           } else {
             arg[label].push(value)
-          } 
+          }
+          */
+        }
+
+        //異体字検索を有効化
+        const isItaiji = arg["itaiji"] && arg["itaiji"].length > 0 && arg["itaiji"][0] === "true"
+
+        if(arg["q"]){
+          for(const value of arg["q"]){
+            const arr = []
+            const values = value.split("　").join(" ").split(" ")
+            arg.itaiji = Array(values.length)
+
+            for(let i = 0; i < values.length; i++){
+              const v = values[i]
+              //arg[label].push(v)
+              arr.push(v)
+              if(isItaiji){
+                arg.itaiji[i] = getItaiji(v)
+              }
+            }
+
+            arg["q"] = arr
+          }
         }
 
         return arg
