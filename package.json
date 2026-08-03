@@ -1,0 +1,42 @@
+{
+  "name": "i3",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@iiif/parser": "^2.2.14",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@tailwindcss/typography": "^0.5.20",
+    "next": "^16.2.10",
+    "next-intl": "^4.13.2",
+    "next-themes": "^0.4.6",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-icons": "^5.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.2",
+    "eslint-config-next": "^16.2.10",
+    "postcss": "^8.5.20",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "postcss": "$postcss"
+  },
+  "description": "Tools related IIIF — IIIF Presentation API と Curation API 1.0 for IIIF の相互変換ツール群",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nakamura196/i3.git"
+  }
+}

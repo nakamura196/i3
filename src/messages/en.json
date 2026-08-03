@@ -1,0 +1,66 @@
+{
+  "Common": {
+    "title": "i3",
+    "home": "Home",
+    "loading": "Loading…",
+    "run": "Run",
+    "copy": "Copy",
+    "copied": "Copied",
+    "download": "Download",
+    "apiUrl": "API URL",
+    "result": "Result",
+    "error": "Error",
+    "example": "Load example",
+    "openIn": "Open in viewer"
+  },
+  "Home": {
+    "title": "i3 — Tools related IIIF",
+    "description": "A small set of tools bridging the IIIF Presentation API and Curation API 1.0 for IIIF. Everything runs in the browser, and each conversion is also available as an API.",
+    "note": "These are lightweight tools and may contain defects. Please use them as a reference.",
+    "converterTitle": "IIIF Converter",
+    "converterDesc": "Converts between IIIF Manifests and Curation Lists, to verify that the two are largely inter-convertible.",
+    "comparisonTitle": "IIIF Curation Comparison",
+    "comparisonDesc": "Loads a Curation List and places the cropped regions side by side — useful for comparing similar figures held by different institutions.",
+    "mapTitle": "IIIF Curation Map Search",
+    "mapDesc": "Displays and searches a large number of annotations on a single large image, such as a map. Search a place name to zoom to it.",
+    "apiTitle": "API",
+    "apiDesc": "Conversion is stateless, so the API URL itself is a durable URI for the converted resource. Hand it straight to Self Museum or the IIIF Curation Viewer."
+  },
+  "Converter": {
+    "title": "IIIF Converter",
+    "description": "Converts between IIIF Manifests and Curation Lists. Accepts IIIF Presentation API v2 or v3 as input.",
+    "toCurationTitle": "Manifest → Curation",
+    "toCurationDesc": "Turns an annotated Manifest into a Curation List of cropped regions, ready to load into Self Museum and similar viewers.",
+    "toCollectionTitle": "Curation → Manifest",
+    "toCollectionDesc": "Turns a Curation List into a IIIF Collection of the Manifests it draws from.",
+    "manifestUri": "IIIF Manifest URI",
+    "curationUri": "IIIF Curation List URI",
+    "detectedVersion": "Detected version",
+    "canvases": "Canvases",
+    "regions": "Regions",
+    "skipped": "Skipped (no region selector)",
+    "manifestCount": "Manifests",
+    "sourceManifests": "Source manifests",
+    "label": "Label",
+    "uri": "URI"
+  },
+  "Comparison": {
+    "title": "IIIF Curation Comparison",
+    "description": "Places the cropped images of a Curation List side by side for comparison.",
+    "curationUri": "IIIF Curation List URI",
+    "regions": "Regions",
+    "selectHint": "Choose the regions you want to compare (multiple allowed).",
+    "selected": "Selected",
+    "clear": "Clear selection",
+    "noSelection": "No region selected."
+  },
+  "MapSearch": {
+    "title": "IIIF Curation Map Search",
+    "description": "Displays and searches a large number of annotations on a single large image.",
+    "curationUri": "IIIF Curation List URI",
+    "search": "Search annotations",
+    "hits": "hits",
+    "noHits": "No matching region.",
+    "clickToZoom": "Click an item in the list to zoom to that region."
+  }
+}

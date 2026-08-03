@@ -1,0 +1,66 @@
+{
+  "Common": {
+    "title": "i3",
+    "home": "ホーム",
+    "loading": "読み込み中…",
+    "run": "実行",
+    "copy": "コピー",
+    "copied": "コピーしました",
+    "download": "ダウンロード",
+    "apiUrl": "API URL",
+    "result": "結果",
+    "error": "エラー",
+    "example": "例を入れる",
+    "openIn": "ビューアで開く"
+  },
+  "Home": {
+    "title": "i3 — Tools related IIIF",
+    "description": "IIIF Presentation API と Curation API 1.0 for IIIF をつなぐ小さなツール群です。ブラウザ上で動作し、変換結果は API としても取得できます。",
+    "note": "いずれも簡易なツールです。不具合等もあり得るため参考程度にご利用ください。",
+    "converterTitle": "IIIF Converter",
+    "converterDesc": "IIIF マニフェストとキュレーションリストを相互変換します。両者が大部分で相互変換可能であるという関係性を確かめるための検証ツールです。",
+    "comparisonTitle": "IIIF Curation Comparison",
+    "comparisonDesc": "キュレーションリストを読み込み、切り出した画像を並べて比較します。複数機関が公開する資料から同種の図像を比べる用途に向きます。",
+    "mapTitle": "IIIF Curation Map Search",
+    "mapDesc": "大きな一枚画像に付与された大量のアノテーションを表示・検索します。地名を検索して該当箇所を拡大表示できます。",
+    "apiTitle": "API",
+    "apiDesc": "変換はステートレスなので、API の URL 自体が変換結果の永続的な URI になります。セルフミュージアムや IIIF Curation Viewer にそのまま渡せます。"
+  },
+  "Converter": {
+    "title": "IIIF Converter",
+    "description": "IIIF マニフェストとキュレーションリストの相互変換ツールです。IIIF Presentation API の v2 / v3 のどちらの入力にも対応します。",
+    "toCurationTitle": "Manifest → Curation",
+    "toCurationDesc": "アノテーション付きのマニフェストを、切り出し領域を持つキュレーションリストに変換します。変換結果はセルフミュージアム等に読み込ませられます。",
+    "toCollectionTitle": "Curation → Manifest",
+    "toCollectionDesc": "キュレーションリストを、出典マニフェストの一覧からなる IIIF コレクションに変換します。",
+    "manifestUri": "IIIF マニフェスト URI",
+    "curationUri": "IIIF キュレーションリスト URI",
+    "detectedVersion": "検出したバージョン",
+    "canvases": "キャンバス",
+    "regions": "切り出し領域",
+    "skipped": "領域指定なしのため除外",
+    "manifestCount": "マニフェスト",
+    "sourceManifests": "出典マニフェスト",
+    "label": "ラベル",
+    "uri": "URI"
+  },
+  "Comparison": {
+    "title": "IIIF Curation Comparison",
+    "description": "キュレーションリストに含まれる切り出し画像を並べて比較します。",
+    "curationUri": "IIIF キュレーションリスト URI",
+    "regions": "領域",
+    "selectHint": "比較したい領域を選んでください（複数選択可）。",
+    "selected": "選択中",
+    "clear": "選択を解除",
+    "noSelection": "領域が選択されていません。"
+  },
+  "MapSearch": {
+    "title": "IIIF Curation Map Search",
+    "description": "大きな一枚画像に対する大量のアノテーションを表示・検索します。",
+    "curationUri": "IIIF キュレーションリスト URI",
+    "search": "アノテーションを検索",
+    "hits": "件",
+    "noHits": "該当する領域がありません。",
+    "clickToZoom": "一覧の項目をクリックすると該当箇所を拡大表示します。"
+  }
+}
