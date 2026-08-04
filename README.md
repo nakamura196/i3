@@ -1,5 +1,7 @@
 # i3 — Tools related IIIF
 
+**https://i3-mu.vercel.app**
+
 [IIIF Presentation API](https://iiif.io/api/presentation/3.0/) と
 [Curation API 1.0 for IIIF](http://codh.rois.ac.jp/iiif/curation/) をつなぐ小さなツール群です。
 
@@ -44,10 +46,8 @@ IIIF マニフェストとキュレーションリストの相互変換ツール
 
 `?u=` に対象の URI を与えると自動実行します。
 
-```
-/conv/convert2curation?u=https%3A%2F%2Fnakamura196.github.io%2Fportal_pro%2Fusage%2Fagriculture%2Fmanifest.json
-/conv/convert2manifest?u=https%3A%2F%2Fmp.ex.nii.ac.jp%2Fapi%2Fcuration%2Fjson%2F388b085f-772e-472d-8866-9951747c6719
-```
+- [Manifest → Curation の例（鳥瞰図）](https://i3-mu.vercel.app/conv/convert2curation?u=https%3A%2F%2Fnakamura196.github.io%2Fportal_pro%2Fusage%2Fagriculture%2Fmanifest.json)
+- [Curation → Manifest の例（百鬼夜行図）](https://i3-mu.vercel.app/conv/convert2manifest?u=https%3A%2F%2Fmp.ex.nii.ac.jp%2Fapi%2Fcuration%2Fjson%2F388b085f-772e-472d-8866-9951747c6719)
 
 例として『百鬼夜行図』のキュレーションを読み込むと、
 東京大学総合図書館・国文学研究資料館・国立国会図書館の 3 マニフェストから構成される
@@ -77,14 +77,14 @@ IIIF コレクションに変換されることが確認できます。
 
 | メソッド | パス | 説明 |
 |---|---|---|
-| GET | `/api/curation?u=<IIIF Manifest URI>` | マニフェスト → キュレーションリスト（`cr:Curation`） |
-| GET | `/api/collection?u=<IIIF Curation URI>` | キュレーションリスト → IIIF コレクション（`sc:Collection`） |
+| GET | [`/api/curation?u=<IIIF Manifest URI>`](https://i3-mu.vercel.app/api/curation?u=https%3A%2F%2Fnakamura196.github.io%2Fportal_pro%2Fusage%2Fagriculture%2Fmanifest.json) | マニフェスト → キュレーションリスト（`cr:Curation`） |
+| GET | [`/api/collection?u=<IIIF Curation URI>`](https://i3-mu.vercel.app/api/collection?u=https%3A%2F%2Fmp.ex.nii.ac.jp%2Fapi%2Fcuration%2Fjson%2F388b085f-772e-472d-8866-9951747c6719) | キュレーションリスト → IIIF コレクション（`sc:Collection`） |
 | GET | `/api/fetch?u=<URI>` | CORS ヘッダを返さないサーバ向けの中継（JSON のみ） |
 
 いずれも `Access-Control-Allow-Origin: *` を返します。
 
 ```bash
-curl 'https://<deployment>/api/curation?u=https%3A%2F%2Fnakamura196.github.io%2Fportal_pro%2Fusage%2Fagriculture%2Fmanifest.json'
+curl 'https://i3-mu.vercel.app/api/curation?u=https%3A%2F%2Fnakamura196.github.io%2Fportal_pro%2Fusage%2Fagriculture%2Fmanifest.json'
 ```
 
 `/api/fetch` は SSRF 対策として、ループバック・プライベート・リンクローカル・CGNAT
@@ -106,8 +106,11 @@ npm run lint
 ```
 src/lib/i3.ts      変換コア（Curation ⇄ Manifest）
 src/lib/iiif.ts    Presentation API v2/v3 の吸収、Image API の解決
-src/app/api/       Route Handler（Edge Runtime）
+src/app/api/       Route Handler
 ```
+
+Vercel にデプロイしており、`main` への push で自動反映されます。
+本番 URL は環境変数 `NEXT_PUBLIC_SITE_URL` で設定しています（OGP と sitemap が参照）。
 
 Next.js 16 / React 19 / next-intl（日本語・英語）/ next-themes（ライト・ダーク）。
 [nextjs-i18n-themes-ssr-template](https://github.com/nakamura196/nextjs-i18n-themes-ssr-template) をベースにしています。
