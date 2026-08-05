@@ -13,6 +13,10 @@
     "example": "例を入れる",
     "openIn": "ビューアで開く"
   },
+  "Header": {
+    "en": "English",
+    "ja": "日本語"
+  },
   "Home": {
     "title": "i3 — Tools related IIIF",
     "description": "IIIF Presentation API と Curation API 1.0 for IIIF をつなぐ小さなツール群です。ブラウザ上で動作し、変換結果は API としても取得できます。",
@@ -62,5 +66,12 @@
     "hits": "件",
     "noHits": "該当する領域がありません。",
     "clickToZoom": "一覧の項目をクリックすると該当箇所を拡大表示します。"
+  },
+  "ApiDocs": {
+    "title": "API ドキュメント",
+    "description": "i3 の Web API を OpenAPI 3.1 で記述したものです。Swagger UI 上でそのまま実行できます。",
+    "specHint": "OpenAPI 仕様の JSON はこちらから取得できます:",
+    "navTitle": "API ドキュメント",
+    "navDesc": "OpenAPI 3.1 仕様と Swagger UI。ブラウザから API を試せます。"
   }
 }

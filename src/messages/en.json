@@ -13,6 +13,10 @@
     "example": "Load example",
     "openIn": "Open in viewer"
   },
+  "Header": {
+    "en": "English",
+    "ja": "日本語"
+  },
   "Home": {
     "title": "i3 — Tools related IIIF",
     "description": "A small set of tools bridging the IIIF Presentation API and Curation API 1.0 for IIIF. Everything runs in the browser, and each conversion is also available as an API.",
@@ -62,5 +66,12 @@
     "hits": "hits",
     "noHits": "No matching region.",
     "clickToZoom": "Click an item in the list to zoom to that region."
+  },
+  "ApiDocs": {
+    "title": "API documentation",
+    "description": "i3's Web API described in OpenAPI 3.1. You can call it directly from Swagger UI.",
+    "specHint": "The OpenAPI specification is available as JSON at:",
+    "navTitle": "API documentation",
+    "navDesc": "OpenAPI 3.1 specification with Swagger UI. Try the API from your browser."
   }
 }

@@ -9,6 +9,10 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip proxy for static files and API routes
-  matcher: ['/((?!api|_next|.*\\..*).*)']
+  // Skip proxy for static files and API routes.
+  //
+  // `api/` と末尾スラッシュまで含めて除外する。`api` だけだと api で始まる
+  // 通常ページ（例: /api-docs）まで i18n の対象外になり、既定ロケールの
+  // 無印パスが 404 になる。
+  matcher: ['/((?!api/|_next|_vercel|.*\\..*).*)']
 };

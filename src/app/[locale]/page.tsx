@@ -7,6 +7,7 @@ export default async function Home({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'Home' });
+  const tApi = await getTranslations({ locale, namespace: 'ApiDocs' });
 
   const tools = [
     { href: '/conv', title: t('converterTitle'), desc: t('converterDesc'), anchor: 'iiif-converter' },
@@ -44,6 +45,13 @@ export default async function Home({ params }: Props) {
 GET /api/collection?u=<IIIF Curation URI>    → IIIF Collection (sc:Collection)
 GET /api/fetch?u=<URI>                       → CORS 中継（JSON のみ）`}
         </pre>
+        <Link
+          href="/api-docs"
+          className="mt-5 inline-block rounded-lg border border-gray-200 dark:border-gray-700 px-5 py-4 hover:border-blue-500 hover:shadow-sm transition"
+        >
+          <span className="block font-semibold text-gray-900 dark:text-gray-100">{tApi('navTitle')}</span>
+          <span className="block text-sm text-gray-600 dark:text-gray-400">{tApi('navDesc')}</span>
+        </Link>
       </section>
     </main>
   );

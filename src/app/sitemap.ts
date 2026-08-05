@@ -9,7 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = SITE_URL;
 
   // Define the static pages available in your template
-  const staticPages = ['', '/conv', '/conv/convert2curation', '/conv/convert2manifest', '/icc', '/map'];
+  const staticPages = ['', '/conv', '/conv/convert2curation', '/conv/convert2manifest', '/icc', '/map', '/api-docs'];
 
   // Generate sitemap entries for all locales and static pages.
   // localePrefix: 'as-needed' → the default locale is served without a prefix,

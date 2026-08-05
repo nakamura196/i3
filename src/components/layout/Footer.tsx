@@ -7,6 +7,8 @@ const TOOL_LINKS = [
   { href: '/map', key: 'mapTitle' as const },
 ];
 
+const DOC_LINKS = [{ href: '/api-docs', key: 'navTitle' as const }];
+
 const EXTERNAL_LINKS = [
   { href: 'https://codh.rois.ac.jp/icp/', label: 'IIIF Curation Platform' },
   { href: 'http://codh.rois.ac.jp/iiif/curation/', label: 'Curation API 1.0 for IIIF' },
@@ -17,6 +19,7 @@ const EXTERNAL_LINKS = [
 export default async function Footer() {
   const tCommon = await getTranslations('Common');
   const tHome = await getTranslations('Home');
+  const tApi = await getTranslations('ApiDocs');
   const year = new Date().getFullYear();
 
   return (
@@ -40,6 +43,16 @@ export default async function Footer() {
                     className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
                     {tHome(l.key)}
+                  </Link>
+                </li>
+              ))}
+              {DOC_LINKS.map((l) => (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  >
+                    {tApi(l.key)}
                   </Link>
                 </li>
               ))}
