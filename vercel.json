@@ -3,5 +3,8 @@
   "framework": null,
   "installCommand": "",
   "buildCommand": "",
-  "rewrites": [{ "source": "/:path*", "destination": "/api/redirect?__path=:path*" }]
+  "rewrites": [
+    { "source": "/", "destination": "/api/redirect" },
+    { "source": "/:path*", "destination": "/api/redirect?__path=:path*" }
+  ]
 }
