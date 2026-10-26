@@ -5,6 +5,6 @@
   "buildCommand": "",
   "rewrites": [
     { "source": "/", "destination": "/api/redirect" },
-    { "source": "/:path*", "destination": "/api/redirect?__path=:path*" }
+    { "source": "/(.+)", "destination": "/api/redirect?__path=$1" }
   ]
 }
